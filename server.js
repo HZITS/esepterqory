@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 
 // MongoDB
-mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/test4')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test4')
 
 // Express
 var app = express();
