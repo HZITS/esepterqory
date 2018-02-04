@@ -1,5 +1,4 @@
-
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const topicSchema = new mongoose.Schema({
     _id: String,
     title: String,

@@ -10,9 +10,6 @@ router.route('/')
 
 .post((req, res) => {
 
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
 
     var problem = new Problem()
 
@@ -51,9 +48,6 @@ router.route('/')
 })
 
 .get((req,res) => {
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
     Problem.find((err, problems) =>{
         if (err) res.json(err)
         res.json(problems);
@@ -62,13 +56,15 @@ router.route('/')
 
 router.route('/topic/:topicId')
 .get((req,res) => {
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
     Problem.find({
         path: req.params.topicId,
-    }).
-    select('_id problem ')
+    })
+    .populate({
+        path: 'topics',
+        model: 'Topic',
+        select: '_id title'
+    })
+    .select('problem topics _id')
     .exec((err, problems) => {
         if(err) {
             res.json(err)
@@ -81,11 +77,14 @@ router.route('/topic/:topicId')
 router.route('/id/:id')
 .get((req,res) => {
 
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
 
-    Problem.findById(req.params.id, (err, problem) => {
+    Problem.findById(req.params.id)
+    .populate({
+        path: 'path',
+        model: 'Topic',
+        select: '_id title'
+    })
+    .exec((err, problem) => {
         if(err) {
             res.json(err)
             return
@@ -94,9 +93,6 @@ router.route('/id/:id')
     })
 })
 .put((req,res)=>{
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
     problem.findById(req.params.id, (err, problem) => {
 
         problem.title = req.body.title

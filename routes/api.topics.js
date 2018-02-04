@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose')
 const router = express.Router();
 const sid = require('shortid-36')
-
 const Topic = require('../models/topic');
 
 router.route('/')
@@ -17,9 +16,6 @@ router.route('/')
     topic.topicsPath = topic.path.split('/')
 
     topic.save( err => {
-        res.set({
-            'Access-Control-Allow-Origin': '*'
-        })
         if(err) {
             res.json(err)
             return
@@ -27,12 +23,8 @@ router.route('/')
         res.json('ok')
     })
 })
-
 .get((req,res) => {
     Topic.find((err, topics) =>{
-        res.set({
-            'Access-Control-Allow-Origin': '*'
-        })
         if(err) {
             res.json(err)
             return
