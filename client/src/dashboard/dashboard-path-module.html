@@ -1,0 +1,41 @@
+
+<dom-module id="dashboard-path-module">
+    <template>
+        <style include="shared-styles">
+            .head{
+                height: 40px;
+                line-height: 40px
+            }
+            a:hover{
+                color: black
+            }
+        </style>
+        <div class="head layout horizontal center">
+
+            <a href="/home">
+                <iron-icon icon="icons:home"></iron-icon>
+            </a>
+            <iron-selector  class="layout horizontal center" selected="{{selectedFragmentIndex}}">
+                <template is="dom-repeat" items="[[topics]]">
+                    <a href$="/dashboard/[[item._id]]" class="layout horizontal center">
+                        <iron-icon icon="icons:chevron-right"></iron-icon>
+                        [[item.title]]
+                    </a>
+                </template>
+            </iron-selector>
+        </div>
+    </template>
+    <script>
+        class DashboardPathModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-path-module' }
+
+            static get properties() {
+                return {
+                    topics: Array
+                }
+            }
+        }
+        customElements.define(DashboardPathModule.is, DashboardPathModule);
+    </script>
+</dom-module>

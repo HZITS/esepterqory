@@ -37,10 +37,6 @@ router.route('/')
 router.route('/:id')
 .get((req,res) => {
 
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
-
     if(req.query.populate == 'true'){
 
         Topic.findById(req.params.id)
@@ -73,9 +69,7 @@ router.route('/:id')
     
 })
 .put((req,res)=>{
-    res.set({
-        'Access-Control-Allow-Origin': '*'
-    })
+
     Topic.findById(req.params.id, (err, topic) => {
 
         topic.title = req.body.title

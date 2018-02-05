@@ -1,0 +1,200 @@
+<link rel="import" href="dashboard-add-topic-module.html">
+<link rel="import" href="dashboard-add-problem-module.html">
+<link rel="import" href="dashboard-problem-module.html">
+<link rel="import" href="dashboard-path-module.html">
+<link rel="import" href="dashboard-problems-cell-module.html">
+
+<dom-module id="dashboard-module">
+    <template>
+        <style include="shared-styles">
+            
+            :host{
+                display: block;
+                background-color: white;
+                display: flex;
+                flex-flow: column;
+            }
+
+            list-module{
+                flex: 0 1 auto;
+                height: calc(100vh - 122px);
+                border-right: 1px solid var(--paper-grey-300);                           
+            }
+
+            dashboard-problem-module {
+                flex: 1 1 auto
+            }
+
+            .head{
+                height: 40px;
+                padding-left: 16px;
+                border-bottom: 2px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-100);
+                color: var(--paper-grey-600);
+            }
+            .body{
+                background-color: white;
+                display: flex;
+                flex-flow: column;
+            }
+
+            .topic:hover, .listItem:hover {
+                color: black;
+                cursor: pointer;
+            }
+
+            .listItem:hover {
+                background-color: var(--paper-grey-300)
+            }
+
+            .listItem{
+                height: 32px;
+                line-height: 32px;
+                color: var(--paper-grey-700);
+                padding-left: 16px; 
+            }
+            .list{
+                overflow: auto;
+                height: calc(100vh - 123px)
+            }
+        </style>
+
+        <app-location route="{{route}}"></app-location>
+        <app-route
+            route="{{route}}"
+            pattern="/dashboard/:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+        <app-route
+            route="{{subroute}}"
+            pattern="/dashboard/[[page]]/:problemId"
+            data="{{subrouteData}}">
+        </app-route>
+        <dashboard-path-module class="head" topics="[[topic.topicsPath]]"></dashboard-path-module>
+        <div class="body layout horizontal">
+            <list-module
+                show-title
+                title="[[topic.title]]"
+                button-title="Добавить подтему"    
+                event="add-topic"
+                style="width:300px"
+            >   
+                <iron-list slot="list" items="[[topic.subtopics]]">
+                    <template>
+                        <a class="listItem" href$="dashboard/[[item._id]]">
+                            [[item.title]]([[item.problemsCount]])
+                        </a>
+                    </template>
+                </iron-list>
+            </list-module>
+            <list-module
+                show-title
+                style="width:500px"
+                title="[[problem.title]]"
+                button-title="[[problem.buttonTitle]]"  
+                event="add-problem"
+            >
+            <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{selectedProblem}}">
+                <template>
+                    <dashboard-problems-cell-module selected="[[selected]]" problem="[[item]]"></dashboard-problems-cell-module>
+                </template>
+            </iron-list> 
+            </list-module>
+            <dashboard-problem-module data="[[selectedProblem]]"></dashboard-problem-module>
+        </div>            
+    
+        <nebula-dialog id="problemDialog">
+            <dashboard-add-problem-module topic="[[topic]]"></dashboard-add-problem-module>
+        </nebula-dialog>
+        <nebula-dialog id="topicDialog">
+            <dashboard-add-topic-module topic="[[topic]]"></dashboard-add-topic-module>
+        </nebula-dialog>
+         
+    </template>
+    <script>
+        class DashboardModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-module' }
+
+            static get properties() {
+                return {
+                    section: Object,
+                    topic: {
+                        type: Object,
+                        observer: "topicChanged"
+                    },
+                    currentListener: Object,
+                    page: {
+                        type: String,
+                        observer: 'pageChanged',
+                    },
+                    currentPage: String,
+                    routeData: Object,
+                    subroute: String,
+                    problem: {
+                        type: Object,
+                        value: {}
+                    }
+                }
+            }
+
+            static get observers() {
+                return [    
+                    "routePageChanged(routeData.page)",
+                    "subroutePageChanged(subrouteData.page)"
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+
+                 dispatcher.subscribe('math-rendered',_ => {
+                    this.$.problems.notifyResize()
+                 })
+
+                this.addEventListener('add-topic',e => {
+                    this.$.topicDialog.show()
+                })
+                this.addEventListener('add-problem',e => {
+                    this.$.problemDialog.show()
+                })
+            }
+
+            routePageChanged(page){ 
+                this.page = page
+            }
+
+            pageChanged(page){
+                ajax().get("/api/topics/" + page, { populate: true})
+                .then( res => {
+                    var topic = res
+                    if (!(topic.subtopics instanceof Array)){
+                        topic.subtopics = [topic.subtopics]
+                    }
+                    this.topic = topic
+                })
+            }
+
+            topicChanged(topic){
+                if(topic){
+                    if(topic.path.split('/').length > 1){
+                        this.problem = {
+                            title: "Задачи в теме: " + topic.title,
+                            buttonTitle: 'Добавить задачу'
+                        } 
+                    } else {
+                        this.problem = null
+                    }
+
+                    ajax().get("/api/problems/topic/" + topic._id)
+                    .then( res => {
+                        this.problems = res
+                    })
+                }
+            }
+
+        }
+        customElements.define(DashboardModule.is, DashboardModule);
+    </script>
+</dom-module

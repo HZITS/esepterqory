@@ -1,0 +1,122 @@
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html"> 
+<link rel="import" href="editor-formula-module.html">
+
+<dom-module id="editor-module">
+    <template>
+        <style include="shared-styles">
+            :host {
+              	display: block;
+				border-top: 1px solid var(--paper-grey-300);
+            }	
+			#editor:focus {
+				outline: none
+			}  
+			.head{
+                padding-left: 16px;
+				border-bottom: 1px solid var(--paper-grey-300);
+				background-color: var(--paper-grey-200)
+			}
+			.body{
+				width: 100%;
+				height: var(--editor-height, 200px);
+				background-color: white;
+			}
+			#editor{
+				padding: 8px 16px 32px 16px;
+				height: calc(var(--editor-height, 200px) - 40px);
+			}
+		</style>
+		<div class="head layout horizontal">
+			<iron-icon icon="editor:format-bold" onmousedown="event.preventDefault();" id="bold" on-click="editAction"></iron-icon>
+			<iron-icon icon="editor:format-italic" onmousedown="event.preventDefault();" id="italic" on-click="editAction"></iron-icon>
+			<iron-icon icon="editor:format-italic" onmousedown="event.preventDefault();" id="func" on-click="editAction"></iron-icon>
+		</div>
+		<div class="body" style="overflow:auto">
+			<div id="editor" contenteditable="true"></div>
+		</div>
+    </template>
+  
+  <script>
+  class EditorModule extends Polymer.Element {
+      static get is() { return 'editor-module'; }
+
+      static get properties(){
+          return {
+            noteid: String
+          }
+      }
+
+
+      static get observers() {
+          return [
+            'noteIdChanged(noteid)',
+          ];
+      }
+
+      connectedCallback(){
+          super.connectedCallback()
+      }      
+
+	  getHTML(){
+		  return this.$.editor.innerHTML
+	  }
+
+      editAction(e){
+		const action = e.target.id
+          switch (action) {
+          case 'title':
+              document.execCommand('formatBlock', false,`h3`)
+              break
+          case 'func':  
+              this.pasteHtmlAtCaret(`<editor-formula-module></editor-formula-module>&nbsp`)
+              break
+          default:
+              document.execCommand(action, false)
+              break;
+          }
+
+      }
+
+
+      pasteHtmlAtCaret(html, element) {
+
+        var sel, range
+        if (this.shadowRoot.getSelection) {
+
+          sel = this.shadowRoot.getSelection()
+          this.sel = sel
+          if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            this.range = range
+            var el = document.createElement("span");
+            el.innerHTML = html;
+            if(element){
+            el.appendChild(element)
+            }
+            var frag = document.createDocumentFragment(), node, lastNode;
+            while ( (node = el.firstChild) ) {
+              lastNode = frag.appendChild(node);
+              this.lastNode = lastNode
+            }
+            range.insertNode(frag);
+
+            // Preserve the selection
+            // if (lastNode) {
+            //     range = range.cloneRange();
+            //     range.setStartAfter(lastNode);
+            //     range.collapse(true);
+            //     sel.removeAllRanges();
+            //     sel.addRange(range);
+            // }
+
+          } 
+
+        }
+
+      }
+
+  }
+  customElements.define(EditorModule.is, EditorModule);
+  </script>
+</dom-module>

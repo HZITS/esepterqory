@@ -76,8 +76,6 @@ router.route('/topic/:topicId')
 
 router.route('/id/:id')
 .get((req,res) => {
-
-
     Problem.findById(req.params.id)
     .populate({
         path: 'path',

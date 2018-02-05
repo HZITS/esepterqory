@@ -1,0 +1,83 @@
+<link rel="import" href="../editor/editor-module.html">
+
+<dom-module id="dashboard-add-problem-module">
+    <template>
+        <style include="shared-styles">    
+        
+            editor-module {
+                width: 100%;
+                --editor-height: 150px
+            }
+
+            .head{
+                border-bottom: 2px solid var(--paper-grey-300);
+                height: 40px;
+                line-height: 40px;
+                background-color: var(--paper-grey-200);
+                padding-left: 16px;
+                padding-right: 16px
+            }
+
+            .body{
+                overflow: auto;
+            }
+            .title{
+                color:var(--paper-grey-600);
+                font-weight: 300;
+                padding-left: 16px;
+                padding-top: 16px
+            }
+            .wrapper{
+                width: 700px;
+                background-color: white
+            }
+        </style>
+        <div class="wrapper">
+            <div class="head layout horizontal justified">
+                <div>Новая задача</div>
+                <div class="butto" on-click="add">Добавить</div>
+            </div>
+            <div class="body">
+                <div class="title">Описание задачи</div>
+                <editor-module id="problem"></editor-module>
+                <div class="title">Описание решения</div>
+                <editor-module id="solution"></editor-module> 
+            </div>
+        </div>
+    </template>
+    <script>
+        class DashboardEditorModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-add-problem-module' }
+
+            static get properties() {
+                return {
+                    topic: Object,
+                }
+            }
+
+            static get observers() {
+                return [
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+            }
+
+            add(){ 
+
+                ajax().post("/api/problems", {
+                    path: this.topic.path,
+                    problem: this.$.problem.getHTML(),
+                    solution: this.$.solution.getHTML()
+                })
+                .then( res => {
+                    console.log(res)
+                })
+            }
+
+        }
+        customElements.define(DashboardEditorModule.is, DashboardEditorModule);
+    </script>
+</dom-module>

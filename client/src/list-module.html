@@ -1,0 +1,94 @@
+<dom-module id="list-module">
+    <template>
+        <style include="shared-styles">
+
+            :host{
+                background-color: white;
+                display: flex;
+                flex-flow: column;
+                height: 100%;
+            }
+
+            .title{
+                color: var(--paper-grey-600);
+                height: 40px;
+                line-height: 40px;
+                padding-left: var(--title-padding-left, 16px);
+                background-color: var(--paper-grey-100);
+                border-bottom: 1px solid var(--paper-grey-300);
+                flex: 0 0 40px;
+            }
+
+            .addButton{
+                color: var(--app-main-color);
+                padding: 8px 8px 8px 16px;
+                line-height: 30px;
+                flex: 0 0 30px;
+            }
+
+            .addButton:hover{
+                 background-color: #E3F2FD;
+                 cursor: pointer;
+            }
+
+            .list{
+                flex: 1 1 auto;   
+                overflow: auto        
+            }
+            a:hover{
+                color: black;
+                cursor: pointer
+            }
+        </style>
+        <template is="dom-if" if="{{showTitle}}">
+            <div class="title">[[title]]</div>
+        </template>
+        <template is="dom-if" if="[[titleLink]]">
+            <a class="title" href$="[[link]]">[[titleLink]]</a>
+        </template>    
+        <template is="dom-if" if="[[logged]]">
+            <template is="dom-if" if="[[buttonTitle]]">
+                <div class="addButton layout horizontal center" on-click="addButtonTapped">
+                    <iron-icon icon="icons:add"></iron-icon>
+                    <div>[[buttonTitle]]</div>
+                </div>
+            </template>
+        </template> 
+        <div class="list" id="list">
+            <slot name="list"></slot>
+        </div>
+    </template>
+    <script>
+        class ListModule extends Polymer.Element {
+
+            static get is() { return 'list-module' }
+
+            static get properties() {
+                return {
+                    title: String,
+                    titleLink: String,
+                    link: String,
+                    buttonTitle: String,
+                    event: String,
+                    showTitle: Boolean,
+                    logged: {
+                        type: Boolean,
+                        value: false
+                    }
+                }
+            }
+
+    
+            connectedCallback(){
+                super.connectedCallback()
+                this.logged = Cookies.get('logged')
+            }
+        
+            addButtonTapped(){
+                this.dispatchEvent(new CustomEvent(this.event, {bubbles: true, composed: true}))
+            }
+
+        }
+        customElements.define(ListModule.is, ListModule);
+    </script>
+</dom-module>

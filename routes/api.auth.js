@@ -22,16 +22,8 @@ router.route('/register/admin')
 router.route('/login')
 .post((req, res) => {
     passport.authenticate('local')(req, res, function () {
-        res.send('ok')
+        res.sendStatus(200)
     })
 })
-
-router.route('/users')
-.get((req,res) => {
-    User.find((err, users) => {
-        res.json(users)
-    })
-})
-
 
 module.exports = router;

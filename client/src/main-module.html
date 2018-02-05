@@ -1,0 +1,162 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-request.html">
+
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../bower_components/nebula-dialog/nebula-dialog.html"> 
+
+<link rel="lazy-import" href="dashboard/dashboard-module.html">
+<link rel="import" href="auth/login-module.html">
+<link rel="lazy-import" href="home/home-module.html">
+<link rel="lazy-import" href="my-view404.html">
+
+<link rel="import" href="list-module.html">
+<link rel="import" href="shared-styles.html">
+
+<script src="math-tex/mathjax-loader.js"></script>
+<script src="math-tex/math-tex.js"></script>
+<script type="text/javascript" src="../bower_components/chance/chance.js"></script>
+<script src="../bower_components/ajax/dist/ajax.min.js"></script>
+<script src="../bower_components/js-cookie/src/js.cookie.js"></script>
+
+<dom-module id="main-module">
+    <template>
+        <style>
+            :host {
+                --app-main-color: var(--paper-blue-600);
+                display: block;
+            }
+
+            app-toolbar{
+                background-color: var( --paper-grey-100);
+                height:40px;
+            }
+            iron-pages{
+                height: calc(100vh - 80px)
+            }
+            .footer{
+                height:38px;
+                border-top: 2px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-200)
+            }
+            .title{
+                 color: var(--app-main-color);
+                 font-weight: 500;
+            }
+
+            .loginButton{
+                font-size: 16px;
+                color: var(--paper-grey-500)
+            }
+        </style>
+
+        <app-location
+            route="{{route}}"
+            url-space-regex="^[[rootPath]]">
+        </app-location>
+
+        <app-route
+            route="{{route}}"
+            pattern="[[rootPath]]:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+        <app-toolbar>
+            <div class="title" main-title>
+                Problems
+            </div>
+            <template is="dom-if" if="[[logged(Cookies.get('logged'))]]">
+                <div class="loginButton" on-click="showLoginDialog">Войти</div>
+            </template>
+        </app-toolbar>
+        <iron-pages selected="[[page]]" attr-for-selected="name">
+            <dashboard-module name="dashboard"></dashboard-module>
+            <home-module name="home"></home-module>
+        </iron-pages>
+        <div class="footer">
+        </div>
+        <nebula-dialog id="loginDialog">
+            <login-module></login-module>
+        </nebula-dialog>
+    </template>
+
+    <script>
+        const baseURL = "http://localhost:3000"
+        // const baseURL = "https://mongomath.herokuapp.com"
+        
+        class MyApp extends Polymer.Element {
+            static get is() { return 'main-module'; }
+
+            static get properties() {
+                return {
+                page: {
+                    type: String,
+                    reflectToAttribute: true,
+                    observer: '_pageChanged',
+                },
+                routeData: Object,
+                subroute: String,
+                // This shouldn't be neccessary, but the Analyzer isn't picking up
+                // Polymer.Element#rootPath
+                rootPath: String,
+                };
+            }
+
+            static get observers() {
+                return [
+                '_routePageChanged(routeData.page)',
+                ];
+            }
+
+            _routePageChanged(page) {
+                // If no page was found in the route data, page will be an empty string.
+                // Default to 'view1' in that case.
+                this.page = page || 'home';
+            
+            }
+
+            _pageChanged(page) {
+                // Load page import on demand. Show 404 page if fails
+                var resolvedPageUrl = this.resolveUrl(page != "404" ? (page + '/' + page + '-module.html'): "my-view404.html");
+                Polymer.importHref(
+                    resolvedPageUrl,
+                    null,
+                    null,
+                    true);
+            }
+
+            showLoginDialog(){
+                this.$.loginDialog.show()
+            }
+        }
+
+        window.customElements.define(MyApp.is, MyApp);
+    </script>
+</dom-module>

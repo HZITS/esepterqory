@@ -1,4 +1,6 @@
 const express = require('express')
+const prpl = require('prpl-server')
+const path = require('path');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const passport = require('passport')
@@ -18,19 +20,12 @@ app.use(require('express-session')({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(express.static(path.join(__dirname, 'client')))
 
 var User = require('./models/user')
 passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
-
-app.use(function(req, res, next) {
-    res.set({
-            'Access-Control-Allow-Origin': 'http://localhost:8081',
-            'Access-Control-Allow-Credentials': true
-        })
-    next()
-});
 
 app.post('/api/topics', isAdmin)
 app.post('/api/problems', isAdmin)
@@ -38,15 +33,17 @@ app.post('/api/problems', isAdmin)
 // Routes
 app.use('/api', require('./routes/api'))
 
+app.get('/*', prpl.makeHandler('.', {
+  builds: [
+    {name: 'client', browserCapabilities: ['es2015', 'push']}
+  ],
+}));
+
 
 function isAdmin(req,res,next) {
     if(req.isAuthenticated()){
         next()
     } else {
-        res.set({
-            "WWW-Authenticate": 'Basic',
-            "Content-Length": "0"
-        })
         res.sendStatus(401)
     }
 }

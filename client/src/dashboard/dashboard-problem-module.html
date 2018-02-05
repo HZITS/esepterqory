@@ -1,0 +1,68 @@
+<dom-module id="dashboard-problem-module">
+    <template>
+        <style include="shared-styles">
+            
+            :host{
+                display: flex;
+                flex-direction: column;
+            }
+
+            .head{
+                flex: 0 1 40px;
+                padding-left: 8px;
+                border-bottom: 1px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-100);
+            }
+
+            .body{
+                flex: 1 1 auto;
+                overflow: auto;
+                padding: 16px;
+            }
+
+            .title{
+                color:var(--paper-grey-600);
+                font-weight: 300
+            }
+        </style>
+        <div class="head">
+            
+        </div>
+        <div class="body">
+            <template is="dom-if" if="[[data]]">
+                <div class="title">Проблема</div>
+                <div id="problem"></div>
+                <div class="title">Решение</div>
+                <div id="solution"></div>
+            </template>
+        </div>
+    </template>
+    <script>
+        class DashboardProblemModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-problem-module' }
+
+            static get properties() {
+                return {
+                    data: {
+                        type: Object,
+                        observer: 'dataChanged'
+                    },
+                    problem: Object
+                }
+            }
+
+            dataChanged(data){
+               if(data){
+                    ajax().get("/api/problems/id/" + data._id)
+                    .then( res => {
+                       this.shadowRoot.querySelector("#problem").innerHTML = res.problem
+                       this.shadowRoot.querySelector("#solution").innerHTML = res.solution
+                   })
+               }
+            }
+
+        }
+        customElements.define(DashboardProblemModule.is, DashboardProblemModule);
+    </script>
+</dom-module>

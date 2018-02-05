@@ -1,0 +1,56 @@
+<dom-module id="login-module">
+    <template>
+        <style include="shared-styles">
+            .head{
+                border-bottom: 2px solid var(--paper-grey-300);
+                height: 40px;
+                line-height: 40px;
+                padding-left: 16px;
+                padding-right: 16px
+            }
+
+            .body{
+                background-color: white;
+                padding: 16px
+            }
+            .wrapper{
+                width: 400px;
+                background-color: var(--paper-grey-200)
+            }
+        </style>
+        <div class="wrapper">
+            <div class="head layout horizontal justified">
+                <div>Логин</div>
+                <div class="butto" on-click="login">Войти</div>
+            </div>
+            <div class="body">
+                <paper-input no-label-float label="username" value="{{username}}"></paper-input>
+                <paper-input no-label-float label="password" type="password" value="{{password}}"></paper-input>
+            </div>
+        </div>      
+    </template>
+    <script>
+        class LoginModule extends Polymer.Element {
+
+            static get is() { return 'login-module' }
+
+            connectedCallback(){
+                super.connectedCallback()
+                console.log('login')
+            }
+
+            login(){
+                request.post('/api/auth/login', {
+                    username: this.username,
+                    password: this.password
+                }).then((result, res) => {
+                    if(res.status == 200){
+                        Cookies.set('logged', 'true')
+                        window.location = '/'
+                    }
+                })
+            }
+        }
+        customElements.define(LoginModule.is, LoginModule);
+    </script>
+</dom-module>
