@@ -19,10 +19,10 @@
   ],
   "builds": [
     {
-      "name": "es5-bundled",
+      "name": "es6",
       "js": {
         "minify": true,
-        "compile": true
+        "compile": false
       },
       "css": {
         "minify": true
@@ -30,7 +30,7 @@
       "html": {
         "minify": true
       },
-      "bundle": true,
+      "bundle": false,
       "addServiceWorker": true,
       "addPushManifest": true,
       "insertPrefetchLinks": true

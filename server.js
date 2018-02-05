@@ -20,7 +20,7 @@ app.use(require('express-session')({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(express.static(path.join(__dirname, 'client/build/es5-bundled')))
+app.use(express.static(path.join(__dirname, 'client/build/es6')))
 
 var User = require('./models/user')
 passport.use(new LocalStrategy(User.authenticate()))
@@ -35,7 +35,7 @@ app.use('/api', require('./routes/api'))
 
 app.get('/*', prpl.makeHandler('.', {
   builds: [
-    {name: 'client/build/es5-bundled', browserCapabilities: ['es2015', 'push']}
+    {name: 'es6', browserCapabilities: ['es2015', 'push']}
   ],
 }));
 
