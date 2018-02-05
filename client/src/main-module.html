@@ -30,7 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 
-<link rel="import" href="../../bower_components/nebula-dialog/nebula-dialog.html"> 
+<link rel="import" href="../bower_components/nebula-dialog/nebula-dialog.html"> 
 
 <link rel="lazy-import" href="dashboard/dashboard-module.html">
 <link rel="import" href="auth/login-module.html">
@@ -92,9 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <div class="title" main-title>
                 Problems
             </div>
-            <template is="dom-if" if="[[logged(Cookies.get('logged'))]]">
-                <div class="loginButton" on-click="showLoginDialog">Войти</div>
-            </template>
+            <div class="loginButton" on-click="showLoginDialog">Войти</div>
         </app-toolbar>
         <iron-pages selected="[[page]]" attr-for-selected="name">
             <dashboard-module name="dashboard"></dashboard-module>

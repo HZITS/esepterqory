@@ -1,0 +1,44 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/main-module.html",
+  "fragments": [
+    "src/dashboard/dashboard-module.html",
+    "src/home/home-module.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "index.html",
+    "src/main-module.html",
+    "src/dashboard/dashboard-module.html",
+    "src/home/home-module.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "manifest.json",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "builds": [
+    {
+      "name": "es5-bundled",
+      "js": {
+        "minify": true,
+        "compile": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addServiceWorker": true,
+      "addPushManifest": true,
+      "insertPrefetchLinks": true
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}
