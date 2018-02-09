@@ -1,8 +1,8 @@
 <link rel="import" href="dashboard-add-topic-module.html">
 <link rel="import" href="dashboard-add-problem-module.html">
 <link rel="import" href="dashboard-problem-module.html">
-<link rel="import" href="dashboard-path-module.html">
 <link rel="import" href="dashboard-problems-cell-module.html">
+<link rel="import" href="dashboard-pages-module.html">
 
 <dom-module id="dashboard-module">
     <template>
@@ -24,14 +24,7 @@
             dashboard-problem-module {
                 flex: 1 1 auto
             }
-
-            .head{
-                height: 40px;
-                padding-left: 16px;
-                border-bottom: 2px solid var(--paper-grey-300);
-                background-color: var(--paper-grey-100);
-                color: var(--paper-grey-600);
-            }
+        
             .body{
                 background-color: white;
                 display: flex;
@@ -57,6 +50,13 @@
                 overflow: auto;
                 height: calc(100vh - 123px)
             }
+            iron-icon{
+                color: var(--paper-grey-600)
+            }
+            .edit{
+                height: 40px;
+                cursor: pointer
+            }
         </style>
 
         <app-location route="{{route}}"></app-location>
@@ -66,12 +66,6 @@
             data="{{routeData}}"
             tail="{{subroute}}">
         </app-route>
-        <app-route
-            route="{{subroute}}"
-            pattern="/dashboard/[[page]]/:problemId"
-            data="{{subrouteData}}">
-        </app-route>
-        <dashboard-path-module class="head" topics="[[topic.topicsPath]]"></dashboard-path-module>
         <div class="body layout horizontal">
             <list-module
                 show-title
@@ -80,6 +74,10 @@
                 event="add-topic"
                 style="width:300px"
             >   
+                <div slot="actions" class="layout horizontal">
+                    <iron-icon class="edit" on-click="edit" icon="icons:create"></iron-icon>
+                    <iron-icon class="edit" on-click="delete" icon="icons:delete"></iron-icon>
+                </div>
                 <iron-list slot="list" items="[[topic.subtopics]]">
                     <template>
                         <a class="listItem" href$="dashboard/[[item._id]]">
@@ -95,21 +93,28 @@
                 button-title="[[problem.buttonTitle]]"  
                 event="add-problem"
             >
-            <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{selectedProblem}}">
-                <template>
-                    <dashboard-problems-cell-module selected="[[selected]]" problem="[[item]]"></dashboard-problems-cell-module>
-                </template>
-            </iron-list> 
+                <a target="_blank" href="/api/download/topic/[[topic._id]]" slot="actions" class="layout horizontal">
+                    <iron-icon class="edit" on-click="delete" icon="icons:file-download"></iron-icon>
+                </a>
+                <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{selectedProblem}}">
+                    <template>
+                        <dashboard-problems-cell-module selected="[[selected]]" problem="[[item]]"></dashboard-problems-cell-module>
+                    </template>
+                </iron-list> 
+                <dashboard-pages-module id="pages" slot="footer" topic="[[topic]]" problems="{{problems}}"></dashboard-pages-module>
             </list-module>
-            <dashboard-problem-module data="[[selectedProblem]]"></dashboard-problem-module>
+            <dashboard-problem-module 
+            title="[[selectedProblem.number]]"
+            data="[[selectedProblem]]">
+            </dashboard-problem-module>
         </div>            
     
-        <nebula-dialog id="problemDialog">
-            <dashboard-add-problem-module topic="[[topic]]"></dashboard-add-problem-module>
-        </nebula-dialog>
-        <nebula-dialog id="topicDialog">
+        <isw-dialog id="problemDialog" with-backdrop>
+            <dashboard-add-problem-module problem="[[editProblem]]" topic="[[topic]]"></dashboard-add-problem-module>
+        </isw-dialog>
+        <isw-dialog id="topicDialog" with-backdrop>
             <dashboard-add-topic-module topic="[[topic]]"></dashboard-add-topic-module>
-        </nebula-dialog>
+        </isw-dialog>
          
     </template>
     <script>
@@ -135,14 +140,18 @@
                     problem: {
                         type: Object,
                         value: {}
+                    },
+                    path: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notify: true
                     }
                 }
             }
 
             static get observers() {
                 return [    
-                    "routePageChanged(routeData.page)",
-                    "subroutePageChanged(subrouteData.page)"
+                    "routePageChanged(routeData.page)"
                 ]
             }
 
@@ -154,10 +163,18 @@
                  })
 
                 this.addEventListener('add-topic',e => {
-                    this.$.topicDialog.show()
+                    this.$.topicDialog.open()
+                })
+                this.addEventListener('edit-problem',e => {
+                    this.$.problemDialog.open()
+                    this.editProblem = e.detail.problem
                 })
                 this.addEventListener('add-problem',e => {
-                    this.$.problemDialog.show()
+                    this.$.problemDialog.open()
+                })
+
+                this.addEventListener('reload-problems', e => {
+                    this.$.pages.pageChanged(this.$.pages, this.topic)
                 })
             }
 
@@ -173,24 +190,25 @@
                         topic.subtopics = [topic.subtopics]
                     }
                     this.topic = topic
+                    console.log(this.topic.title)
                 })
             }
 
             topicChanged(topic){
+                
                 if(topic){
+                    
+                    this.path = topic.topicsPath
+
                     if(topic.path.split('/').length > 1){
                         this.problem = {
-                            title: "Задачи в теме: " + topic.title,
+                            title: "Задачи в: " + topic.title,
                             buttonTitle: 'Добавить задачу'
                         } 
                     } else {
                         this.problem = null
                     }
 
-                    ajax().get("/api/problems/topic/" + topic._id)
-                    .then( res => {
-                        this.problems = res
-                    })
                 }
             }
 

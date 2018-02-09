@@ -2,18 +2,17 @@ const express = require('express')
 const mongoose = require('mongoose')
 const router = express.Router()
 const sid = require('shortid-36')
-
 const Problem = require('../models/problem');
 const Topic = require('../models/topic');
 
 router.route('/')
-
 .post((req, res) => {
 
 
     var problem = new Problem()
 
     problem._id = sid.generate()
+    problem.number = req.body.number
     problem.problem = req.body.problem
     problem.solution = req.body.solution
     problem.path = req.body.path.split('/')
@@ -54,17 +53,26 @@ router.route('/')
     });
 })
 
-router.route('/topic/:topicId')
+router.route('/topic/:topicId/:pageId')
 .get((req,res) => {
+
+    const perPage = 10
+
     Problem.find({
         path: req.params.topicId,
+        createdAt: {
+            $lte: req.query.createdAt || Date.now()
+        }
     })
     .populate({
         path: 'topics',
         model: 'Topic',
         select: '_id title'
     })
-    .select('problem topics _id')
+    .select('problem topics number _id createdAt')
+    .skip(perPage * (req.params.pageId - 1))
+    .limit(perPage)
+    .sort({createdAt: -1})
     .exec((err, problems) => {
         if(err) {
             res.json(err)
@@ -91,27 +99,62 @@ router.route('/id/:id')
     })
 })
 .put((req,res)=>{
-    problem.findById(req.params.id, (err, problem) => {
+    Problem.findById(req.params.id, (err, problem) => {
 
-        problem.title = req.body.title
-        problem.path = req.body.path
+        problem.problem = req.body.problem
+        problem.solution = req.body.solution
+        problem.number = req.body.number
 
         problem.save(err=>{
             if(err) {
                 res.json(err)
                 return
             }
+
             res.send('updated')
         })
 
     })
 })
 .delete((req,res)=>{
-    problem.remove({
-        _id: req.params.id
-    }, err => {
-        res.send('deleted')
+
+    console.log(req.params.id)
+
+    Problem.findById(req.params.id, (err, problem) => {
+
+        if(err || !problem) {
+            res.json(err)
+            return
+        }
+    
+        Topic.find()
+        .or(problem.path.map(el => {
+            return {
+                _id: el
+            }
+        }))
+        .setOptions({ multi: true })
+        .update({ $inc: { problemsCount: -1 } })
+        .exec((err, t) => {
+            if(err) {
+                res.json(err)
+                return
+            }
+
+            Problem.remove({
+                _id: req.params.id
+            }, err => {
+
+                if(err) {
+                    res.json(err)
+                    return
+                }
+
+                res.send('deleted')
+            })
+        })
     })
+
 })
 
 // Return router

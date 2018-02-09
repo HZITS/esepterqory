@@ -22,12 +22,12 @@
         </style>
         <div class="wrapper">
             <div class="head layout horizontal justified">
-                <div>Логин</div>
-                <div class="butto" on-click="login">Войти</div>
+                <div title>Войти в аккаунт</div>
             </div>
             <div class="body">
                 <paper-input no-label-float label="username" value="{{username}}"></paper-input>
                 <paper-input no-label-float label="password" type="password" value="{{password}}"></paper-input>
+                <div class="mainButton" on-click="login">Войти</div>
             </div>
         </div>      
     </template>
@@ -36,13 +36,8 @@
 
             static get is() { return 'login-module' }
 
-            connectedCallback(){
-                super.connectedCallback()
-                console.log('login')
-            }
-
             login(){
-                request.post('/api/auth/login', {
+                ajax().post('/api/auth/login', {
                     username: this.username,
                     password: this.password
                 }).then((result, res) => {

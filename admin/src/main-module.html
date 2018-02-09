@@ -1,0 +1,150 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+
+
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+
+
+<link rel="import" href="../bower_components/isw-dialog/isw-dialog.html"> 
+
+
+
+<link rel="import" href="dashboard/dashboard-module.html">
+<link rel="import" href="dashboard/dashboard-path-module.html">
+
+<link rel="lazy-import" href="topics-module.html">
+<link rel="lazy-import" href="sources-module.html">
+
+<link rel="import" href="list-module.html">
+<link rel="import" href="shared-styles.html">
+
+<script src="math-tex/mathjax-loader.js"></script>
+<script src="math-tex/math-tex.js"></script>
+<script src="../bower_components/ajax/dist/ajax.min.js"></script>
+<script src="../bower_components/js-cookie/src/js.cookie.js"></script>
+
+<dom-module id="main-module">
+    <template>
+        <style include="shared-styles">
+            :host {
+                --app-main-color: var(--paper-blue-600);
+                display: block;
+            }
+
+            app-toolbar{
+                background-color: var( --paper-grey-100);
+                height:40px;
+            }
+            iron-pages{
+                height: calc(100vh - 122px)
+            }
+            .footer{
+                height:38px;
+                line-height: 38px;
+                border-top: 2px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-200)
+            }
+            .footer * {
+                padding: 0px 16px;
+                color: var(--paper-grey-600)
+            }
+            .footer *:hover{
+                color: black
+            }
+            .title{
+                 color: var(--app-main-color);
+                 font-weight: 500;
+            }
+
+            .loginButton{
+                font-size: 16px;
+                color: var(--paper-grey-500)
+            }
+        </style>
+
+        <app-location
+            route="{{route}}"
+        >
+        </app-location>
+
+        <app-route
+            route="{{route}}"
+            pattern="/admin/:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+        <app-toolbar>
+            <a class="title" href="/home">EsepterQory.kz Admin</a>
+            <iron-selector selected="{{page}}" attr-for-selected="name">
+                <a href="/admin/topics">Темы</a>
+                <a href="/admin/sources">Темы</a>
+                <a href="/admin/topics">Темы</a>
+            </iron-selector>
+        </app-toolbar>
+        <dashboard-path-module class="head"></dashboard-path-module>
+        <iron-pages selected="[[page]]" attr-for-selected="page">
+            <dashboard-module page="topics"></dashboard-module>
+            <dashboard-module page="sources"></dashboard-module>
+        </iron-pages>
+    </template>
+
+    <script>
+        class MyApp extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'main-module'; }
+
+            static get properties() {
+                return {
+                    page: {
+                        type: String,
+                        observer: '_pageChanged',
+                    },
+                    routeData: Object
+                };
+            }
+
+            static get observers() {
+                return [
+                '_routePageChanged(routeData.page)',
+                ];
+            }
+
+            _routePageChanged(page) {
+                this.page = page || 'topics'
+            }
+
+            _pageChanged(page) {
+
+                if(!page) return
+
+                var resolvedPageUrl 
+
+                if(page == "topics" || page == "sources")  
+                    resolvedPageUrl = this.resolveUrl('dashboard/dashboard-module.html')
+
+                this.dispatch({
+                    type: 'updateSection',
+                    section: page
+                })
+               
+
+                Polymer.importHref(
+                    resolvedPageUrl,
+                    null,
+                    null,
+                    true);
+            }
+
+        }
+
+        window.customElements.define(MyApp.is, MyApp);
+    </script>
+</dom-module>

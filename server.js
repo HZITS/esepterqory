@@ -7,7 +7,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test4')
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
 
 // Express
 var app = express();
@@ -20,32 +20,53 @@ app.use(require('express-session')({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(express.static(path.join(__dirname, 'client/build/es6')))
+// app.use(express.static(path.join(__dirname, 'client/build/es6')))
+// app.use(express.static(path.join(__dirname, 'client')))
+app.use(express.static(path.join(__dirname, './admin')))
 
 var User = require('./models/user')
 passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
-app.post('/api/topics', isAdmin)
-app.post('/api/problems', isAdmin)
+// app.post('/api/topics', isAdmin)
+// app.post('/api/problems', isAdmin)
 
 // Routes
+
 app.use('/api', require('./routes/api'))
 
-app.get('/*', prpl.makeHandler('.', {
+app.use('/admin*', isAdmin)
+app.get('/admin*', prpl.makeHandler('.', {
   builds: [
-    {name: 'es6', browserCapabilities: ['es2015', 'push']}
+    // {name: 'client/build/es6', "browserCapabilities": ["es2015", "push","serviceworker"]},
+    {name: 'admin'}
   ],
 }));
 
 
+
+// app.get('/*', prpl.makeHandler('.', {
+//   builds: [
+//     // {name: 'client/build/es6', "browserCapabilities": ["es2015", "push","serviceworker"]},
+//     {name: 'client'}
+//   ],
+// }));
+
+
 function isAdmin(req,res,next) {
-    if(req.isAuthenticated()){
-        next()
-    } else {
-        res.sendStatus(401)
-    }
+	console.log(req.get('authorization'))
+	if(req.get('authorization') == 'Basic YWRtaW46YWRtaW5Sb290MTch'){
+		res.set({
+			"Cache-Control": "no-cache"
+		})
+		next()
+	} else {
+		res.set({
+			"WWW-Authenticate": 'Basic realm="Access to admin panel"'
+		})
+		res.sendStatus(401)
+	}
 }
 
 // Start server

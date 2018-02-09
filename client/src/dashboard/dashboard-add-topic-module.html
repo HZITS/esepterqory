@@ -13,7 +13,8 @@
 
             .body{
                 background-color: white;
-                padding: 16px
+                padding: 16px;
+                padding-top: 20px;
             }
             .wrapper{
                 width: 400px;
@@ -22,11 +23,11 @@
         </style>
        <div class="wrapper">
            <div class="head layout horizontal justified">
-               <div>Новая тема</div>
-               <div class="butto" on-click="add">Добавить</div>
+               <div title>Новая подтема в [[topic.title]]</div>
            </div>
            <div class="body">
                 <paper-input no-label-float label="Название темы" value="{{topicTitle}}"></paper-input>
+                <div class="mainButton" on-click="add">Добавить</div>
            </div>
        </div>
     </template>

@@ -6,15 +6,20 @@
   },
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "fs": "0.0.1-security",
     "html-pdf": "^2.2.0",
+    "mathjax-node": "^2.0.0",
+    "mathjax-node-page": "^2.0.0",
     "mongoose": "^5.0.3",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.4.0",
+    "phantom-html2pdf": "^4.0.1",
     "prpl-server": "^1.0.0",
-    "shortid-36": "^0.1.2"
+    "shortid-36": "^0.1.2",
+    "webshot": "^0.18.0"
   }
 }

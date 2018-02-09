@@ -6,16 +6,30 @@
         <style include="shared-styles">
             :host {
               	display: block;
-				border-top: 1px solid var(--paper-grey-300);
+				border: 2px solid var(--paper-grey-300);
             }	
 			#editor:focus {
 				outline: none
 			}  
+            #editor{
+                font-size: 16px;
+            }
+            #editor:empty:before{
+              content: attr(placeholder);
+              display: block; /* For Firefox */;
+              color: var(--paper-grey-600)
+            }
 			.head{
-                padding-left: 16px;
+                margin: 0px 8px;
+                height: 32px;
+                line-height: 32px;
 				border-bottom: 1px solid var(--paper-grey-300);
-				background-color: var(--paper-grey-200)
+                color: var(--paper-grey-600)
 			}
+            .head *:hover{
+                cursor: pointer;
+                color: black
+            }
 			.body{
 				width: 100%;
 				height: var(--editor-height, 200px);
@@ -25,14 +39,17 @@
 				padding: 8px 16px 32px 16px;
 				height: calc(var(--editor-height, 200px) - 40px);
 			}
+ 
 		</style>
-		<div class="head layout horizontal">
+		<div class="head layout horizontal center">
 			<iron-icon icon="editor:format-bold" onmousedown="event.preventDefault();" id="bold" on-click="editAction"></iron-icon>
 			<iron-icon icon="editor:format-italic" onmousedown="event.preventDefault();" id="italic" on-click="editAction"></iron-icon>
-			<iron-icon icon="editor:format-italic" onmousedown="event.preventDefault();" id="func" on-click="editAction"></iron-icon>
+            <iron-icon icon="editor:insert-photo" onmousedown="event.preventDefault();" id="image" on-click="editAction"></iron-icon>
+			<iron-icon icon="editor:functions" onmousedown="event.preventDefault();" id="func" on-click="editAction"></iron-icon>
 		</div>
+
 		<div class="body" style="overflow:auto">
-			<div id="editor" contenteditable="true"></div>
+			<div id="editor" placeholder$="[[placeholder]]" contenteditable="true"></div>
 		</div>
     </template>
   
@@ -42,41 +59,68 @@
 
       static get properties(){
           return {
-            noteid: String
+            placeholder: String
           }
       }
-
-
-      static get observers() {
-          return [
-            'noteIdChanged(noteid)',
-          ];
-      }
-
-      connectedCallback(){
-          super.connectedCallback()
-      }      
 
 	  getHTML(){
 		  return this.$.editor.innerHTML
 	  }
 
-      editAction(e){
-		const action = e.target.id
-          switch (action) {
-          case 'title':
-              document.execCommand('formatBlock', false,`h3`)
-              break
-          case 'func':  
-              this.pasteHtmlAtCaret(`<editor-formula-module></editor-formula-module>&nbsp`)
-              break
-          default:
-              document.execCommand(action, false)
-              break;
-          }
-
+      setHTML(html){
+        this.$.editor.innerHTML = html
       }
 
+        editAction(e){
+            const action = e.target.id
+            switch (action) {
+            case 'title':
+                document.execCommand('formatBlock', false,`h3`)
+                break
+            case 'image':
+                this.inputImageDialog()
+                break
+            case 'func':  
+                this.pasteHtmlAtCaret(`<editor-formula-module></editor-formula-module>&nbsp`)
+                break
+            default:
+                document.execCommand(action, false)
+                break;
+            }
+
+        }
+
+        inputImageDialog() {
+
+            const imageFile = document.createElement('input');
+            imageFile.setAttribute('type', 'file');
+
+            imageFile.onchange = event => {
+
+            if (event.currentTarget.files.length > 0) {
+
+                const fileToLoad = event.currentTarget.files[0];
+                const fileReader = new FileReader()
+
+                fileReader.onload = fileLoadedEvent => {
+
+                const srcData = fileLoadedEvent.target.result; // base64!
+
+                this.pasteHtmlAtCaret(`
+                    <img style="width: 50%;
+                    margin: 0 25%" src=${srcData}>
+                `)
+
+                }
+
+                fileReader.readAsDataURL(fileToLoad)
+
+            }
+            }
+
+            imageFile.click();
+            return false;
+        }
 
       pasteHtmlAtCaret(html, element) {
 

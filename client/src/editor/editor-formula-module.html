@@ -35,7 +35,7 @@
 			<div id="wrapper">
 					<div contenteditable="true" id="input" on-keyup="_editorBodyChanged"></div>
 					<div id="formulaWrapper">
-							<math-tex id="math" display="block">[[bodyText]]</math-tex> 
+							<math-tex id="math">[[bodyText]]</math-tex> 
 					</div>
 			</div>  
 		</div> 
@@ -80,7 +80,7 @@
 			
 			this.$.wrapper.remove()
             this.$.body.innerHTML = `
-            	<math-tex id="math" display="block">${mathText}</math-tex>
+            	<math-tex id="math">${mathText}</math-tex>
 			`
         }
 

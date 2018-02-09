@@ -4,7 +4,11 @@
         <style include="shared-styles">
             .head{
                 height: 40px;
-                line-height: 40px
+                line-height: 40px;
+                padding-left: 16px;
+                border-bottom: 2px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-100);
+                color: var(--paper-grey-600);
             }
             a:hover{
                 color: black
@@ -16,7 +20,7 @@
                 <iron-icon icon="icons:home"></iron-icon>
             </a>
             <iron-selector  class="layout horizontal center" selected="{{selectedFragmentIndex}}">
-                <template is="dom-repeat" items="[[topics]]">
+                <template is="dom-repeat" items="[[path]]">
                     <a href$="/dashboard/[[item._id]]" class="layout horizontal center">
                         <iron-icon icon="icons:chevron-right"></iron-icon>
                         [[item.title]]
@@ -32,7 +36,7 @@
 
             static get properties() {
                 return {
-                    topics: Array
+                    path: Array
                 }
             }
         }

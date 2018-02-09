@@ -11,7 +11,7 @@
                 height: 100%;
             }
 
-            .title{
+            .head{
                 color: var(--paper-grey-600);
                 height: 40px;
                 line-height: 40px;
@@ -19,6 +19,7 @@
                 background-color: var(--paper-grey-100);
                 border-bottom: 1px solid var(--paper-grey-300);
                 flex: 0 0 40px;
+                padding-right: 16px;
             }
 
             .addButton{
@@ -37,17 +38,25 @@
                 flex: 1 1 auto;   
                 overflow: auto        
             }
+            .footer{
+                flex: 0 0 40px;           
+            }
             a:hover{
                 color: black;
                 cursor: pointer
             }
         </style>
-        <template is="dom-if" if="{{showTitle}}">
-            <div class="title">[[title]]</div>
-        </template>
-        <template is="dom-if" if="[[titleLink]]">
-            <a class="title" href$="[[link]]">[[titleLink]]</a>
-        </template>    
+        <div class="head layout horizontal justified">
+            <template is="dom-if" if="{{showTitle}}">
+                <div class="title">[[title]]</div>
+            </template>
+            <template is="dom-if" if="[[titleLink]]">
+                <a class="title" href$="[[link]]">[[titleLink]]</a>
+            </template>  
+            <div>
+                <slot name="actions"></slot>
+            </div>
+        </div>  
         <template is="dom-if" if="[[logged]]">
             <template is="dom-if" if="[[buttonTitle]]">
                 <div class="addButton layout horizontal center" on-click="addButtonTapped">
@@ -58,6 +67,9 @@
         </template> 
         <div class="list" id="list">
             <slot name="list"></slot>
+        </div>
+        <div class="footer" id="footer">
+            <slot name="footer"></slot>
         </div>
     </template>
     <script>
@@ -75,7 +87,7 @@
                     showTitle: Boolean,
                     logged: {
                         type: Boolean,
-                        value: false
+                        value: true
                     }
                 }
             }
@@ -83,7 +95,7 @@
     
             connectedCallback(){
                 super.connectedCallback()
-                this.logged = Cookies.get('logged')
+                // this.logged = Cookies.get('logged')
             }
         
             addButtonTapped(){

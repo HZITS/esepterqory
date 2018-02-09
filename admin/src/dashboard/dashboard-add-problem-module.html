@@ -1,0 +1,132 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../editor/editor-module.html">
+
+<dom-module id="dashboard-add-problem-module">
+    <template>
+        <style include="shared-styles">    
+        
+            editor-module {
+                --editor-height: 200px;
+                margin-top: 32px;
+            }
+            .head{
+                height: 60px;
+                padding: 16px 0px 0px 16px;
+                color: white;
+                background-color: var(--app-main-color)
+            }
+
+            .body{
+                overflow: auto;
+                padding: 16px;
+                padding-bottom: 0;
+                height: 408px;
+            }
+       
+            #dialog{
+                width: 700px;
+                height: 500px;
+                background-color: var(--paper-grey-100)
+            }
+        </style>
+        <isw-dialog id="dialog" with-backdrop>
+            <div class="head">
+                <div title>
+                    <template is="dom-if" if="[[!edit]]">Ноав</template>
+                    <template is="dom-if" if="[[edit]]">авыа </template>
+                </div>
+            </div>
+            <div class="body">
+                <paper-input no-label-float label="Номер задачи" value="{{number}}"></paper-input>
+                <editor-module placeholder="Описание проблемы" id="problem"></editor-module>
+                <editor-module placeholder="Описание решения" id="solution"></editor-module> 
+                <template is="dom-if" if="[[!edit]]"> 
+                     <div class="mainButton" on-click="add">Добавить</div>
+                </template>
+                <template is="dom-if" if="[[edit]]"> 
+                    <div class="mainButton" on-click="save">Сохранить</div>
+                </template>
+            </div>
+        </isw-dialog>
+    </template>
+    <script>
+        class DashboardEditorModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-add-problem-module' }
+
+            static get properties() {
+                return {
+                    topic: Object,
+                    edit: {
+                        type: Boolean,
+                        value: false
+                    },
+                    problem: {
+                        type: Object,
+                        observer: 'problemChanged'
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+            }
+
+            problemChanged(problem){
+                this.edit = true
+                this.$.problem.setHTML(problem.problem)
+                this.$.solution.setHTML(problem.solution)
+                this.number = problem.number
+            }
+
+            open(){
+                this.$.dialog.open()
+            }
+
+            save(){
+                ajax().put("/api/problems/id/" + this.problem._id, {
+                    number: this.number,
+                    problem: this.$.problem.getHTML(),
+                    solution: this.$.solution.getHTML()
+                })
+                .then( res => {
+                    this.$.problem.setHTML(''),
+                    this.$.solution.setHTML('')
+                    this.number = ''
+                    this.dispatchEvent(new CustomEvent('reload-problems', {
+                        bubbles: true, 
+                        composed: true
+                    }))
+                    this.$.dialog.close()
+                })
+
+            }
+
+            add(){ 
+                ajax().post("/api/problems", {
+                    path: this.topic.path,
+                    number: this.number,
+                    problem: this.$.problem.getHTML(),
+                    solution: this.$.solution.getHTML()
+                })
+                .then( res => {
+                    this.dispatchEvent(new CustomEvent('reload-problems', {
+                        bubbles: true, 
+                        composed: true
+                    }))
+                    this.$.problem.setHTML(''),
+                    this.$.solution.setHTML('')
+                    this.number = ''
+                    this.$.dialog.close()
+                })
+            }
+
+        }
+        customElements.define(DashboardEditorModule.is, DashboardEditorModule);
+    </script>
+</dom-module>

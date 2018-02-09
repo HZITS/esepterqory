@@ -1,0 +1,110 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<dom-module id="dashboard-problem-module">
+    <template>
+        <style include="shared-styles">
+            
+            :host{
+                display: flex;
+                flex-direction: column;
+            }
+
+            .head{
+                flex: 0 0 40px;
+                line-height: 40px;
+                padding: 0px 16px;
+                color:var(--paper-grey-600);
+                border-bottom: 1px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-100);
+            }
+
+            .body{
+                flex: 1 1 auto;
+                overflow: auto;
+                padding: 16px;
+            }
+
+            .edit{
+                height: 40px;
+                margin-left: 8px;
+                cursor: pointer
+            }
+        </style>
+        <div class="head layout horizontal justified">
+            <div class="title">[[title]]</div>
+            <template is="dom-if" if="[[data]]">
+                <div class="layout horizontal center">
+                    <iron-icon class="edit" on-click="edit" icon="icons:create"></iron-icon>
+                    <iron-icon class="edit" on-click="delete" icon="icons:delete"></iron-icon>
+                </div>
+            </template>
+        </div>  
+        <div class="body">
+            <template is="dom-if" if="[[data]]">
+                <div class="title">Проблема</div>
+                <div id="problem"></div>
+                <div class="title">Решение</div>
+                <div id="solution"></div>
+            </template>
+        </div>
+    </template>
+    <script>
+        class DashboardProblemModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-problem-module' }
+
+            static get properties() {
+                return {
+                    data: {
+                        type: Object,
+                        observer: 'dataChanged'
+                    },
+                    problem: Object
+                }
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+                this.logged = Cookies.get('logged')
+            }
+
+            dataChanged(data){
+               if(data){
+                    ajax().get("/api/problems/id/" + data._id)
+                    .then( res => {
+                        this.problem = res
+                        this.shadowRoot.querySelector("#problem").innerHTML = res.problem
+                        this.shadowRoot.querySelector("#solution").innerHTML = res.solution
+                   })
+               }
+            }
+
+            edit(){
+                 this.dispatchEvent(new CustomEvent('edit-problem', {
+                     bubbles: true, 
+                     composed: true,
+                     detail: {
+                         problem:this.problem
+                     }
+                    }))
+            }
+
+            delete(){
+                console.log(this.problem.path)
+                ajax().delete("/api/problems/id/" + this.problem._id, {
+                    data: {
+                        path: this.problem.path
+                    }
+                })
+                .then( res => {
+                    this.dispatchEvent(new CustomEvent('reload-problems', {
+                     bubbles: true, 
+                     composed: true,
+                   
+                    }))
+                })
+            }
+
+        }
+        customElements.define(DashboardProblemModule.is, DashboardProblemModule);
+    </script>
+</dom-module>

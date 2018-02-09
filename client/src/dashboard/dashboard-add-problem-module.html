@@ -6,8 +6,8 @@
         <style include="shared-styles">    
         
             editor-module {
-                width: 100%;
-                --editor-height: 150px
+                --editor-height: 150px;
+                margin-top: 32px;
             }
 
             .head{
@@ -21,11 +21,12 @@
 
             .body{
                 overflow: auto;
+                 padding: 16px;
+                 padding-bottom: 0;
             }
             .title{
                 color:var(--paper-grey-600);
                 font-weight: 300;
-                padding-left: 16px;
                 padding-top: 16px
             }
             .wrapper{
@@ -35,14 +36,19 @@
         </style>
         <div class="wrapper">
             <div class="head layout horizontal justified">
-                <div>Новая задача</div>
-                <div class="butto" on-click="add">Добавить</div>
+                <div title>Новая задача</div>
             </div>
             <div class="body">
-                <div class="title">Описание задачи</div>
-                <editor-module id="problem"></editor-module>
-                <div class="title">Описание решения</div>
-                <editor-module id="solution"></editor-module> 
+                <paper-input no-label-float label="Номер задачи" value="{{number}}"></paper-input>
+                <editor-module placeholder="Описание проблемы" id="problem"></editor-module>
+                <!--<div class="title">Описание решения</div>-->
+                <editor-module placeholder="Описание решения" id="solution"></editor-module> 
+                <template is="dom-if" if="[[!edit]]"> 
+                     <div class="mainButton" on-click="add">Добавить</div>
+                </template>
+                <template is="dom-if" if="[[edit]]"> 
+                    <div class="mainButton" on-click="save">Сохранить</div>
+                </template>
             </div>
         </div>
     </template>
@@ -54,6 +60,14 @@
             static get properties() {
                 return {
                     topic: Object,
+                    edit: {
+                        type: Boolean,
+                        value: false
+                    },
+                    problem: {
+                        type: Object,
+                        observer: 'problemChanged'
+                    }
                 }
             }
 
@@ -66,10 +80,33 @@
                 super.connectedCallback()
             }
 
-            add(){ 
+            problemChanged(problem){
+                this.edit = true
+                this.$.problem.setHTML(problem.problem)
+                this.$.solution.setHTML(problem.solution)
+                this.number = problem.number
+            }
 
+            save(){
+                ajax().put("/api/problems/id/" + this.problem._id, {
+                    number: this.number,
+                    problem: this.$.problem.getHTML(),
+                    solution: this.$.solution.getHTML()
+                })
+                .then( res => {
+                    console.log(res)
+                })
+
+                this.dispatchEvent(new CustomEvent('reload-problems', {
+                    bubbles: true, 
+                    composed: true
+                }))
+            }
+
+            add(){ 
                 ajax().post("/api/problems", {
                     path: this.topic.path,
+                    number: this.number,
                     problem: this.$.problem.getHTML(),
                     solution: this.$.solution.getHTML()
                 })

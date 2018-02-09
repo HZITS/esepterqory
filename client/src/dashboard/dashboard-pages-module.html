@@ -1,0 +1,127 @@
+<dom-module id="dashboard-pages-module">
+    <template>
+        <style include="shared-styles">
+            :host{
+                border-top: 2px solid var(--paper-grey-300)
+            }
+            iron-selector{
+                border-top: 2px solid var(--paper-grey-300);
+                line-height: 38px;
+                padding-left: 8px;
+            }
+            .page{
+                padding: 0px 8px;
+            }
+            .page.iron-selected{
+                color:var(--app-main-color)
+            }
+        </style>
+        <app-location route="{{route}}"></app-location>
+        <app-route
+            route="{{route}}"
+            pattern="/dashboard/[[topic._id]]/:page"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+        <iron-selector id="selector" class="layout horizontal center" attr-for-selected="name">
+            <template is="dom-repeat" items="[[pages]]">
+                <a href$="/dashboard/[[topic._id]]/[[item]]" class="page layout horizontal center" name$="[[item]]">
+                    [[item]]
+                </a>
+            </template>
+        </iron-selector>
+    </template>
+    <script>
+        class DashboardPagesModule extends Polymer.Element {
+
+            static get is() { return 'dashboard-pages-module' }
+
+            static get properties() {
+                return {
+                    topic: {
+                        type: Object,
+                        observer: 'topicChanged'
+                    },
+                    problems: {
+                        type: Array,
+                        observer: 'problemsChanged'
+                    },
+                    selectedPageIndex: {
+                        type: Array,
+                        observer: 'selectedPageIndexChanged'
+                    },
+                    pages: Array,
+                    page: String,
+                    routeData: Object,
+                    problems: {
+                        type: Array,
+                        reflectToAttribute: true,
+                        notify: true
+                    },
+                    startIndex:{
+                        type:Number,
+                        value:0
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                    'pageChanged(routeData.page, topic)'
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+               
+            }
+
+            pageChanged(p, topic){
+                var page = Number(p)
+
+                if(!topic) return
+                if(!page) page = 1
+                this.page = page
+
+                const perPage = 10
+                const maxPages = 10
+                const upperBound = Math.floor(topic.problemsCount / perPage) + (topic.problemsCount % perPage == 0 ? 0: 1)
+
+                var pages = []
+                var endIndex
+
+                if(page - 5 <= 0 ) {
+                    this.startIndex = 1
+                    endIndex = upperBound < maxPages ? upperBound : maxPages
+                } else {
+                    this.startIndex = page - 5
+                    endIndex = page + 4 > upperBound ? upperBound: page + 4
+                }
+
+                for(var i = this.startIndex; i < endIndex + 1; i++){
+                    pages.push(i)
+                }
+                console.log(upperBound, Math.floor(topic.problemsCount / perPage))
+                this.pages = pages
+
+                setTimeout(_ => {
+                    this.$.selector.selected = page
+                })
+
+                ajax().get("/api/problems/topic/" + topic._id + "/" + page)
+                .then( res => {
+                    this.problems = res
+                })                
+            }
+
+            selectedPageIndexChanged(i){
+
+                const index = Number(i)
+            
+
+            }
+
+        }
+        customElements.define(DashboardPagesModule.is, DashboardPagesModule);
+    </script>
+</dom-module>

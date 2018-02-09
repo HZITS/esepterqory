@@ -73,9 +73,7 @@ router.route('/:id')
     Topic.findById(req.params.id, (err, topic) => {
 
         topic.title = req.body.title
-        topic.path = req.body.path
-        topic.prepath = req.body.prepath
-
+        
         topic.save(err=>{
             if(err) {
                 res.json(err)

@@ -19,7 +19,9 @@
     "nebula-dialog": "arsnebula/nebula-dialog#^2.0.2",
     "paper-input": "PolymerElements/paper-input#^2.1.0",
     "iron-ajax": "PolymerElements/iron-ajax#^2.0.8",
-    "js-cookie": "^2.2.0"
+    "js-cookie": "^2.2.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^2.0.1",
+    "isw-dialog": "IswPolymerElements/isw-dialog#^1.0.3"
   },
   "resolutions": {
     "polymer": "^2.0.0"

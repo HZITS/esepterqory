@@ -1,0 +1,28 @@
+<dom-module id="articles-module">
+    <template>
+        <style include="shared-styles">
+        </style>
+    </template>
+    <script>
+        class ArticlesModule extends Polymer.Element {
+
+            static get is() { return 'articles-module' }
+
+            static get properties() {
+                return {
+                }
+            }
+
+            static get observers() {
+                return [
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+            }
+
+        }
+        customElements.define(ArticlesModule.is, ArticlesModule);
+    </script>
+</dom-module>
