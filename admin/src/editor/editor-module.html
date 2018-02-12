@@ -45,31 +45,30 @@
 			<iron-icon icon="editor:format-bold" onmousedown="event.preventDefault();" id="bold" on-click="editAction"></iron-icon>
 			<iron-icon icon="editor:format-italic" onmousedown="event.preventDefault();" id="italic" on-click="editAction"></iron-icon>
             <iron-icon icon="editor:insert-photo" onmousedown="event.preventDefault();" id="image" on-click="editAction"></iron-icon>
-			<iron-icon icon="editor:functions" onmousedown="event.preventDefault();" id="func" on-click="editAction"></iron-icon>
 		</div>
 
 		<div class="body" style="overflow:auto">
-			<div id="editor" placeholder$="[[placeholder]]" contenteditable="true"></div>
+			<div id="editor" placeholder$="[[placeholder]]" on-keyup="contentChanged" contenteditable="true"></div>
 		</div>
     </template>
   
-  <script>
-  class EditorModule extends Polymer.Element {
-      static get is() { return 'editor-module'; }
+    <script>
+    class EditorModule extends Polymer.Element {
+        static get is() { return 'editor-module'; }
 
-      static get properties(){
-          return {
-            placeholder: String
-          }
-      }
+        static get properties(){
+            return {
+                placeholder: String
+            }
+        }
 
-	  getHTML(){
-		  return this.$.editor.innerHTML
-	  }
+        getHTML(){
+            return this.$.editor.innerHTML
+        }
 
-      setHTML(html){
-        this.$.editor.innerHTML = html
-      }
+        setHTML(html){
+            this.$.editor.innerHTML = html
+        }
 
         editAction(e){
             const action = e.target.id
@@ -80,14 +79,27 @@
             case 'image':
                 this.inputImageDialog()
                 break
-            case 'func':  
-                this.pasteHtmlAtCaret(`&nbsp<editor-formula-module></editor-formula-module>&nbsp`)
-                break
             default:
                 document.execCommand(action, false)
                 break;
             }
 
+        }
+
+        contentChanged(){
+
+            const e = this.$.editor
+
+            if(e.innerHTML.indexOf('$$') !== -1) {
+                e.innerHTML = e.innerHTML.replace('$$', '&nbsp<editor-formula-module display="block"></editor-formula-module>&nbsp')
+                return
+            }
+
+            if(e.innerHTML.indexOf('##') !== -1) {
+                e.innerHTML = e.innerHTML.replace('##', '&nbsp<editor-formula-module></editor-formula-module>&nbsp')
+                return
+            }
+            
         }
 
         inputImageDialog() {
@@ -116,47 +128,12 @@
                 fileReader.readAsDataURL(fileToLoad)
 
             }
+
             }
 
             imageFile.click();
             return false;
         }
-
-      pasteHtmlAtCaret(html, element) {
-
-        var sel, range
-        if (this.shadowRoot.getSelection) {
-
-          sel = this.shadowRoot.getSelection()
-          this.sel = sel
-          if (sel.getRangeAt && sel.rangeCount) {
-            range = sel.getRangeAt(0);
-            range.deleteContents();
-            this.range = range
-            var el = document.createElement("span");
-            el.innerHTML = html;
-            if(element){
-            el.appendChild(element)
-            }
-            var frag = document.createDocumentFragment(), node, lastNode;
-            while ( (node = el.firstChild) ) {
-              lastNode = frag.appendChild(node);
-              this.lastNode = lastNode
-            }
-            range.insertNode(frag);
-
-            range = range.cloneRange();
-            range.setStartAfter(lastNode);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
-          
-
-          } 
-
-        }
-
-      }
 
   }
   customElements.define(EditorModule.is, EditorModule);

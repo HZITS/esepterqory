@@ -8,6 +8,10 @@ const topicSchema = new mongoose.Schema({
     problemsCount: {
         type: Number,
         default: 0
+    },
+    articlesCount: {
+        type: Number,
+        default: 0
     }
 }, {
     toObject: { virtuals: false },
@@ -18,12 +22,5 @@ topicSchema.virtual('subtopics',{
     localField: 'path',
     foreignField: 'prepath'
 })
-
-topicSchema.virtual('problems',{
-    ref: 'Problem',
-    localField: '_id',
-    foreignField: 'path.*'
-})
-
 
 module.exports = mongoose.model('Topic', topicSchema);

@@ -1,0 +1,49 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="redux-store.html">
+
+<dom-module id="path-module">
+    <template>
+        <style include="shared-styles">
+
+            .head{
+                height: 40px;
+                line-height: 40px;
+                padding-left: 16px;
+                background-color: var(--app-main-color);
+                color: white;
+            }
+            a:hover{
+                color: black
+            }
+        </style>
+        <iron-meta key="path" value="{{path}}"></iron-meta>
+        <div class="head layout horizontal center">
+            <iron-icon icon="icons:home"></iron-icon>
+            <iron-selector  class="layout horizontal center" selected="{{selectedFragmentIndex}}">
+                <template is="dom-repeat" items="[[path]]">
+                    <a href$="[[item.link]]" class="layout horizontal center">
+                        <iron-icon icon="icons:chevron-right"></iron-icon>
+                        [[item.title]]
+                    </a>
+                </template>
+            </iron-selector>
+        </div>
+    </template>
+    <script>
+        class PathModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'path-module' }
+
+            static get properties() {
+                return {
+                    path:{
+                        type: Array,
+                        statePath: 'path'
+                    }
+                }
+            }
+        }
+        customElements.define(PathModule.is,PathModule);
+    </script>
+</dom-module>

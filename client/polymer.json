@@ -3,11 +3,11 @@
   "entrypoint": "index.html",
   "shell": "src/main-module.html",
   "fragments": [
-    "src/dashboard/dashboard-module.html",
-    "src/home/home-module.html"
+    "src/topics/topics-module.html",
+    "src/sources/sources-module.html",
+    "src/articles/articles-module.html"
   ],
   "extraDependencies": [
-    "manifest.json",
     "bower_components/webcomponentsjs/*.js"
   ],
   "lint": {
@@ -20,9 +20,15 @@
       "css": {"minify": true},
       "html": {"minify": true},
       "bundle": true,
-      "addServiceWorker": true,
       "addPushManifest": true,
       "insertPrefetchLinks": true
+    },
+    {
+      "name": "fallback",
+      "js": {"minify": true, "compile": true},
+      "css": {"minify": true},
+      "html": {"minify": true},
+      "bundle": true
     }
   ]
 }

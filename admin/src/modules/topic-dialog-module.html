@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="redux-store.html">
+<link rel="import" href="topic-dialog-module.html">
+
+<dom-module id="topic-dialog-module">
+    <template>
+        <style include="shared-styles">
+            .head{
+                height: 60px;
+                padding: 16px 0px 0px 16px;
+                color: white;
+                background-color: var(--app-main-color)
+            }
+            .body{
+                padding: 16px;
+                padding-top: 24px;
+            }
+            #dialog{
+                width: 500px;
+                background-color: var(--paper-grey-100)
+            }
+        </style>
+        <isw-dialog id="dialog" with-backdrop>
+            <div class="head">
+                <div title>
+                    <template is="dom-if" if="[[!edit]]"> fdsfds</template>
+                    <template is="dom-if" if="[[edit]]"> lego</template>
+                </div>
+            </div>
+            <div class="body">
+                 <paper-input no-label-float label="Название темы" value="{{topicTitle}}"></paper-input>
+                 <template is="dom-if" if="[[!edit]]"> 
+                      <div class="mainButton" on-click="add">Добавить</div>
+                 </template>
+                 <template is="dom-if" if="[[edit]]"> 
+                     <div class="mainButton" on-click="save">Сохранить</div>
+                 </template>
+            </div>
+        </isw-dialog>
+    </template>
+    <script>
+        class DialogTopicModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'topic-dialog-module' }
+
+            static get properties() {
+                return {
+                    topic: {
+                        type: Object,
+                        statePath: 'currentTopic',
+                    },
+                    topicToEdit: {
+                        type: Object,
+                        observer: 'topicToEditChanged'
+                    },
+                    path: String,
+                    edit: {
+                        type: Boolean,
+                        value: false
+                    }
+                }
+            }
+
+            topicToEditChanged(topic){
+                if(!topic){
+                    this.topicTitle = null
+                    this.edit = false
+                    return
+                }
+                this.topicTitle = topic.title
+                this.edit = true
+            }
+
+            open(){
+                this.$.dialog.open()
+            }
+
+            add(){ 
+
+                ajax().post("/api/topics", {
+                    path: this.topic.path,
+                    title: this.topicTitle
+                })
+                .then( res => {
+                    this.topicTitle = null
+                    dispatcher.dispatch('reload-topics')
+                    this.$.dialog.close()
+             
+                })
+        
+            }
+
+            save(){
+                ajax().put("/api/topics/" + this.topic._id, {
+                    title: this.topicTitle
+                })
+                .then( res => {
+                    this.topicTitle = null
+                    dispatcher.dispatch('reload-topics')
+                    this.$.dialog.close()
+                })
+            }
+
+        }
+        customElements.define(DialogTopicModule.is, DialogTopicModule);
+    </script>
+</dom-module>

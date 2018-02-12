@@ -1,0 +1,125 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="problem-dialog-module.html">
+<link rel="import" href="problems-cell-module.html">
+<link rel="import" href="redux-store.html">
+<link rel="import" href="pages-module.html">
+
+<dom-module id="problems-module">
+    <template>
+        <style include="shared-styles">
+            .list{
+                overflow: auto;
+                height: calc(100vh - 123px)
+            }
+        </style>
+        <section-module
+            show-title
+            style="width:500px"
+            title="[[problem.title]]"
+            button-title="[[problem.buttonTitle]]"  
+            event="add-problem"
+        >   
+            <template is="dom-if" if="[[problem.title]]">
+                <a slot="actions" target="_blank" href$="/api/download/topic/[[topic._id]]/[[problemsPage]]" class="layout horizontal">
+                     <iron-icon class="edit" icon="icons:file-download"></iron-icon>
+                </a>
+            </template>
+            <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{currentProblem}}">
+                <template>
+                    <problems-cell-module selected="[[selected]]" problem="[[item]]"></problems-cell-module>
+                </template>
+            </iron-list> 
+            <pages-module slot="footer" topic="[[topic]]" title="[[title]]"></pages-module>
+        </section-module>   
+        <problem-dialog-module id="problemDialog" title="[[title]]"></problem-dialog-module>
+    </template>
+    <script>
+        class ProblemsModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'problems-module' }
+
+            static get properties() {
+                return {
+                    title: String,
+                    topic: {
+                        type: Object,
+                        statePath(state) {
+                            return state[this.title + 'Topic']
+                        }
+                    },
+                    page: {
+                        type: Number,
+                        statePath(state) {
+                            return state[this.title + 'Page']
+                        }
+                    },
+                    currentProblem: {
+                        type: Object,
+                        observer: 'currentProblemChanged'
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                    'getProblems(topic, page)'
+                ];
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+
+                dispatcher.subscribe('math-rendered',_ => {
+                    this.$.problems.notifyResize()
+                })
+
+                this.addEventListener('edit-problem',e => {
+                    this.$.problemDialog.open()
+                    this.editProblem = e.detail.problem
+                })
+                this.addEventListener('add-problem',e => {
+                    this.$.problemDialog.open()
+                })
+                dispatcher.subscribe('reload-problems', _ => {
+                    this.getProblems(this.topic, 1, this.title, this.section)
+                })
+            }
+
+            getProblems(topic, p){
+                
+                if(!topic) return
+                if(!topic.path) return
+                if(!p) return
+
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+                    if(topic.path.split('/').length > 1){
+                        this.problem = {
+                            title: "Задачи в: " + topic.title,
+                            buttonTitle: 'Добавить задачу'
+                        } 
+                    } else {
+                        this.problem = null
+                    }
+
+                    ajax().get("/api/problems/topic/" + topic._id + "/" + p)
+                    .then( res => {
+                        this.problems = res
+                    })                    
+                })
+
+            }
+
+            currentProblemChanged(problem){
+                this.dispatch({
+                    type: 'currentProblem',
+                    value:problem
+                })
+            }
+
+        }
+        customElements.define(ProblemsModule.is, ProblemsModule);
+    </script>

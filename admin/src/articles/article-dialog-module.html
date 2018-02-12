@@ -1,0 +1,114 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../editor/editor-module.html">
+<link rel="import" href="../modules/redux-store.html">
+
+<dom-module id="article-dialog-module">
+    <template>
+        <style include="shared-styles">    
+        
+            editor-module {
+                --editor-height: 320px;
+                margin-top: 16px;
+            }
+            .head{
+                height: 60px;
+                padding: 16px 0px 0px 16px;
+                color: white;
+                background-color: var(--app-main-color)
+            }
+
+            .body{
+                overflow: auto;
+                padding: 16px;
+                padding-bottom: 0;
+            }
+       
+            #dialog{
+                width: 700px;
+                background-color: var(--paper-grey-100)
+            }
+        </style>
+        <isw-dialog id="dialog" with-backdrop>
+            <div class="head">
+                <div title>
+                    <template is="dom-if" if="[[!edit]]">Ноав</template>
+                    <template is="dom-if" if="[[edit]]">авыа </template>
+                </div>
+            </div>
+            <div class="body">
+                <paper-input no-label-float label="Title" value="{{title}}"></paper-input>
+                <editor-module placeholder="article" id="article"></editor-module> 
+                <template is="dom-if" if="[[!edit]]"> 
+                     <div class="mainButton" on-click="add">Добавить</div>
+                </template>
+                <template is="dom-if" if="[[edit]]"> 
+                    <div class="mainButton" on-click="save">Сохранить</div>
+                </template>
+            </div>
+        </isw-dialog>
+    </template>
+    <script>
+        class DialogarticleModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'article-dialog-module' }
+
+            static get properties() {
+                return {
+                    topic: {
+                        type: Object,
+                        statePath: 'currentTopic'
+                    },
+                    edit: {
+                        type: Boolean,
+                        value: false
+                    },
+                    articleToEdit: {
+                        type: Object,
+                        observer: 'articleToEditChanged'
+                    }
+                }
+            }
+
+            articleToEditChanged(article){
+                if(!article) return
+                this.edit = true
+                this.$.article.setHTML(article.article)
+                this.title = article.title
+            }
+
+            open(){
+                this.$.dialog.open()
+            }
+
+            save(){
+                ajax().put("/api/articles/id/" + this.articleToEdit._id, {
+                    title: this.title,
+                    article: this.$.article.getHTML()
+                })
+                .then( res => {
+                    this.$.article.setHTML(''),
+                    this.title = ''
+                    dispatcher.dispatch('reload-articles')
+                    this.$.dialog.close()
+                })
+            }
+
+            add(){ 
+
+                ajax().post("/api/articles", {
+                    path: this.topic.path,
+                    article: this.$.article.getHTML(),
+                    title: this.title
+                })
+                .then( res => {
+                    dispatcher.dispatch('reload-articles')
+                    this.$.article.setHTML(''),
+                    this.title = ''
+                    this.$.dialog.close()
+                })
+            }
+
+        }
+        customElements.define(DialogarticleModule.is, DialogarticleModule);
+    </script>
+</dom-module>
