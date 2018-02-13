@@ -2,11 +2,18 @@ const express = require('express')
 const router = express.Router()
 const prpl = require('prpl-server')
 
+// router.use('/', isAdmin)
+// router.use('/',prpl.makeHandler('.', {
+// 	builds: [
+// 		{name: 'admin', browserCapabilities: ['es2015', 'push']},
+// 	]
+// }))
+
 router.use('/', isAdmin)
 router.use('/',prpl.makeHandler('.', {
 	builds: [
-		{name: 'admin/build/es6', browserCapabilities: ['es2015', 'push']},
-		{name: 'fallback'}
+		// {name: 'admin/build/es6', browserCapabilities: ['es2015', 'push']},
+		{name: 'admin/build/fallback'}
 	]
 }))
 

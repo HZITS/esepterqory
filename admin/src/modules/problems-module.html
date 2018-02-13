@@ -20,11 +20,6 @@
             button-title="[[problem.buttonTitle]]"  
             event="add-problem"
         >   
-            <template is="dom-if" if="[[problem.title]]">
-                <a slot="actions" target="_blank" href$="/api/download/topic/[[topic._id]]/[[problemsPage]]" class="layout horizontal">
-                     <iron-icon class="edit" icon="icons:file-download"></iron-icon>
-                </a>
-            </template>
             <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{currentProblem}}">
                 <template>
                     <problems-cell-module selected="[[selected]]" problem="[[item]]"></problems-cell-module>

@@ -48,7 +48,7 @@
                 </template>
             </iron-list>
         </section-module>
-        <topic-dialog-module id="topicDialog" ></topic-dialog-module>
+        <topic-dialog-module id="topicDialog" title="[[title]]" topic-to-edit="[[topicToEdit]]"></topic-dialog-module>
     </template>
     <script>
         class TopicsTreeModule extends ReduxMixin(Polymer.Element) {
@@ -79,6 +79,7 @@
                     this.$.topicDialog.open()
                 })
                 dispatcher.subscribe('reload-topics', _ => {
+
                     ajax().get("/api/topics/" + this.topic._id, { populate: true})
                     .then( res => {
                         if(res == "doesn't exist") {
@@ -91,11 +92,18 @@
                         }
 
                         this.dispatch({
-                            type: 'currentTopic',
+                            type: this.title + 'Topic',
                             value: topic
                         })
                     })
                 }) 
+            }
+
+            delete(){
+                ajax().delete("/api/topics/" + this.topic._id)
+                .then( res => {
+                    dispatcher.dispatch('reload-topics')
+                })
             }
 
             editTopic(){

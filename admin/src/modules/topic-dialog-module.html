@@ -45,9 +45,12 @@
 
             static get properties() {
                 return {
+                    title: String,
                     topic: {
                         type: Object,
-                        statePath: 'currentTopic',
+                        statePath(state) {
+                            return state[this.title + 'Topic']
+                        }
                     },
                     topicToEdit: {
                         type: Object,

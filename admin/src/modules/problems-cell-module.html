@@ -1,4 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="redux-store.html">
+<link rel="import" href="pages-module.html">
 
 <dom-module id="problems-cell-module">
     <template>
@@ -51,7 +53,7 @@
         </div>
     </template>
     <script>
-        class DashboardProblemsCellModule extends Polymer.Element {
+        class DashboardProblemsCellModule extends ReduxMixin(Polymer.Element) {
 
             static get is() { return 'problems-cell-module' }
 

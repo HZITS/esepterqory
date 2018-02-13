@@ -16,7 +16,7 @@
                     <problems-cell-module selected="[[selected]]" problem="[[item]]"></problems-cell-module>
                 </template>
             </iron-list> 
-            <pages-module id="topicIds" slot="footer" title="[[title]]"></pages-module>
+            <pages-module slot="footer" title="[[title]]" topic="[[topic]]"></pages-module>
         </section-module>   
     </template>
     <script>
@@ -35,7 +35,9 @@
                     },
                     page: {
                         type: Number,
-                        statePath: 'page'
+                        statePath(state) {
+                            return state[this.title + 'Page']
+                        }
                     },
                     currentProblem: {
                         type: Object,
@@ -70,14 +72,20 @@
             }
 
             getProblems(topic, p){
-                
+
                 if(!topic) return
                 if(!topic.path) return
-                if(!p) p = 1
+                if(!p) return
 
-                ajax().get("/api/problems/topic/" + topic._id + "/" + p)
-                .then( res => {
-                    this.problems = res
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+
+                    ajax().get("/api/problems/topic/" + topic._id + "/" + p)
+                    .then( res => {
+                        this.problems = res
+                    })
                 })
             }
 

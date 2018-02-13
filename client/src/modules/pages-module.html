@@ -70,34 +70,41 @@
             }
 
             pageChanged(p, topic, title){
+
+                console.log('page in pages-module changed')
                 var page = Number(p)
                 if(!topic) return
                 if(!page) return
-                this.page = page
 
-                const perPage = 10
-                const maxPages = 10
-                const upperBound = title == "articles" ? Math.ceil(topic.articlesCount / perPage): Math.ceil(topic.problemsCount / perPage) 
-                var pages = []
-                var endIndex
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+                    const perPage = 10
+                    const maxPages = 10
+                    const upperBound = title == "articles" ? Math.ceil(topic.articlesCount / perPage): Math.ceil(topic.problemsCount / perPage) 
+                    var pages = []
+                    var endIndex
 
-                if(page - 5 <= 0 ) {
-                    this.startIndex = 1
-                    endIndex = upperBound < maxPages ? upperBound : maxPages
-                } else {
-                    this.startIndex = page - 5
-                    endIndex = page + 4 > upperBound ? upperBound: page + 4
-                }
+                    if(page - 5 <= 0 ) {
+                        this.startIndex = 1
+                        endIndex = upperBound < maxPages ? upperBound : maxPages
+                    } else {
+                        this.startIndex = page - 5
+                        endIndex = page + 4 > upperBound ? upperBound: page + 4
+                    }
 
-                for(var i = this.startIndex; i < endIndex + 1; i++){
-                    pages.push(i)
-                }
+                    for(var i = this.startIndex; i < endIndex + 1; i++){
+                        pages.push(i)
+                    }
 
-                this.pages = pages
+                    this.pages = pages
 
-                setTimeout(_ => {
-                    this.$.selector.selected = page
-                }, 100)
+                    setTimeout(_ => {
+                        this.$.selector.selected = page
+                    }, 100)
+                
+                })
             }
 
         }

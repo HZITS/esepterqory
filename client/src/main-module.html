@@ -20,6 +20,9 @@
 <link rel="lazy-import" href="topics/topics-module.html">
 <link rel="lazy-import" href="sources/sources-module.html">
 <link rel="lazy-import" href="home/home-module.html">
+<link rel="lazy-import" href="feedback/feedback-module.html">
+<link rel="lazy-import" href="authors/authors-module.html">
+<link rel="lazy-import" href="about/about-module.html">
 
 
 <link rel="import" href="modules/path-module.html">
@@ -49,6 +52,10 @@
                 font-weight: 300
             }
            
+            iron-pages{
+                height: calc(100vh - 122px)
+            }
+
             .footer{
                 height:38px;
                 line-height: 38px;
@@ -103,12 +110,15 @@
             <sources-module name="sources"></sources-module>
             <articles-module name="articles"></articles-module>
             <home-module name="home"></home-module>
+            <about-module name="about"></about-module>
+            <authors-module name="authors"></authors-module>
+            <feedback-module name="feedback"></feedback-module>
         </iron-pages>
-        <div class="footer layout horizontal center-justified">
+        <footer class="footer layout horizontal center-justified">
             <a href="/about">О проекте</a>
             <a href="/authors">Авторы</a>
             <a href="/feedback">Предложения</a>
-        </div>
+        </footer>
     </template>
 
     <script>
@@ -152,7 +162,7 @@
                 this.topicIdDebouncer,
                 Polymer.Async.timeOut.after(100),
                 _ => {
-                    this.topicId = topicId || 'topics'
+                    this.topicId = topicId
                 })
             }
 

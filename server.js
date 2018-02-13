@@ -39,12 +39,21 @@ app.get((req,res,next) => {
 })
 
 app.use('/api', require('./routes/api'))
-
 app.use(subdomain('admin', require('./routes/admin')))
+
+//Testing
+
+// app.get('/*', prpl.makeHandler('.', {
+// 	builds: [
+// 		{name: 'client'}
+// 	]
+// }))
+
+// Production
 
 app.get('/*', prpl.makeHandler('.', {
 	builds: [
-		{name: 'client/build/es6', browserCapabilities: ['es2015', 'push']},
+		// {name: 'client/build/es6', browserCapabilities: ['es2015', 'push']},
 		{name: 'client/build/fallback'}
 	]
 }))

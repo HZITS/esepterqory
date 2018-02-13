@@ -19,7 +19,8 @@
     "paper-dialog": "PolymerElements/paper-dialog#^2.0.1",
     "isw-dialog": "IswPolymerElements/isw-dialog#^1.0.3",
     "polymer-redux": "tur-nr/polymer-redux#^1.0.5",
-    "paper-dialog-lite": "ryanburns23/paper-dialog-lite#^3.0.0"
+    "paper-dialog-lite": "ryanburns23/paper-dialog-lite#^3.0.0",
+    "app-localize-behavior": "PolymerElements/app-localize-behavior#^2.0.1"
   },
   "resolutions": {
     "polymer": "^2.0.0"

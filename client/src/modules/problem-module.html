@@ -33,13 +33,7 @@
             }
         </style>
         <div class="head layout horizontal justified">
-            <div class="title">[[title]]</div>
-            <template is="dom-if" if="[[data]]">
-                <div class="layout horizontal center">
-                    <iron-icon class="edit" on-click="edit" icon="icons:create"></iron-icon>
-                    <iron-icon class="edit" on-click="delete" icon="icons:delete"></iron-icon>
-                </div>
-            </template>
+            <div class="title">[[problem.number]]</div>
         </div>  
         <div class="body">
             <template is="dom-if" if="[[data]]">
@@ -49,7 +43,6 @@
                 <div id="solution"></div>
             </template>
         </div>
-        <problem-dialog-module id="problemDialog" problem-to-edit="[[problem]]"></problem-dialog-module>
     </template>
     <script>
         class DashboardProblemModule extends ReduxMixin(Polymer.Element) {

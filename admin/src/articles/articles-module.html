@@ -23,11 +23,6 @@
                 button-title="[[article.buttonTitle]]"  
                 event="add-article"
             >   
-                <template is="dom-if" if="[[article.title]]">
-                    <a slot="actions" target="_blank" href$="/api/download/topic/[[topic._id]]/[[articlesPage]]" class="layout horizontal">
-                         <iron-icon class="edit" icon="icons:file-download"></iron-icon>
-                    </a>
-                </template>
                 <iron-list slot="list" id="articles" items="[[articles]]" selection-enabled selected-item="{{currentArticle}}">
                     <template>
                         <articles-cell-module selected="[[selected]]" article="[[item]]"></articles-cell-module>

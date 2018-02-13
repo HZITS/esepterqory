@@ -35,14 +35,14 @@
         <isw-dialog id="dialog" with-backdrop>
             <div class="head">
                 <div title>
-                    <template is="dom-if" if="[[!edit]]">Ноав</template>
-                    <template is="dom-if" if="[[edit]]">авыа </template>
+                    <template is="dom-if" if="[[!edit]]">Жаңа есеп</template>
+                    <template is="dom-if" if="[[edit]]">Есебі өңдеу</template>
                 </div>
             </div>
             <div class="body">
-                <paper-input no-label-float label="Номер задачи" value="{{number}}"></paper-input>
-                <editor-module placeholder="Описание проблемы" id="problem"></editor-module>
-                <editor-module placeholder="Описание решения" id="solution"></editor-module> 
+                <paper-input no-label-float label="Eceп нөмірі" value="{{number}}"></paper-input>
+                <editor-module placeholder="Есеп" id="problem"></editor-module>
+                <editor-module placeholder="Шешім" id="solution"></editor-module> 
                 <template is="dom-if" if="[[!edit]]"> 
                      <div class="mainButton" on-click="add">Добавить</div>
                 </template>
