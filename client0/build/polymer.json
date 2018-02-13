@@ -1,0 +1,64 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/main-module.html",
+  "fragments": [
+    "src/topics/topics-module.html",
+    "src/sources/sources-module.html",
+    "src/articles/articles-module.html",
+    "src/about/about-module.html",
+    "src/authors/authors-module.html",
+    "src/feedback/feedback-module.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "index.html",
+    "src/main-module.html",
+    "src/topics/topics-module.html",
+    "src/sources/sources-module.html",
+    "src/articles/articles-module.html",
+    "src/about/about-module.html",
+    "src/authors/authors-module.html",
+    "src/feedback/feedback-module.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js",
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "builds": [
+    {
+      "name": "es6",
+      "js": {
+        "minify": true,
+        "compile": false
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true,
+      "addPushManifest": true,
+      "insertPrefetchLinks": true
+    },
+    {
+      "name": "fallback",
+      "js": {
+        "minify": true,
+        "compile": true
+      },
+      "css": {
+        "minify": true
+      },
+      "html": {
+        "minify": true
+      },
+      "bundle": true
+    }
+  ],
+  "lint": {
+    "rules": [
+      "polymer-2"
+    ]
+  }
+}

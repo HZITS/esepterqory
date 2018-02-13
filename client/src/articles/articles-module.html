@@ -7,6 +7,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../modules/redux-store.html">
 
+
 <dom-module id="articles-module">
     <template>
         <style include="shared-styles">
@@ -15,7 +16,6 @@
             <topics-tree-module title="articles" slot="section1"></topics-tree-module>
             <section-module
                 slot="section2"
-                show-title
                 title="[[article.title]]"
                 style="width:500px"
             >   

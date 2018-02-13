@@ -19,20 +19,21 @@
             }
 
             .listItem{
-                height: 32px;
-                line-height: 32px;
+                min-height: 32px;
                 color: var(--paper-grey-700);
-                padding-left: 16px; 
+                max-width: 100%;
+                display: flex;
+                align-items: center
             }
             .list{
-                overflow: auto;
-                height: calc(100vh - 123px)
+                margin-top: 0;
+                margin-bottom: 16px;
             }
         </style>
         <section-module
             show-title
             title="[[topic.title]]"
-            button-title="Добавить"    
+            button-title="Қосу"    
             event="add-topic"
             style="width:300px"
         >   
@@ -40,13 +41,13 @@
                 <iron-icon class="edit" on-click="editTopic" icon="icons:create"></iron-icon>
                 <iron-icon class="edit" style="margin-left: 8px" on-click="delete" icon="icons:delete"></iron-icon>
             </div>
-            <iron-list slot="list" items="[[topic.subtopics]]">
-                <template>
-                    <a class="listItem" href$="/[[section]]/[[item._id]]">
-                        [[item.title]]([[item.problemsCount]])
+            <ul class="list" slot="list">
+                <template is="dom-repeat" items="[[setSubtopics(topic.subtopics)]]">
+                    <a class="listItem layout horizontal" href$="/[[section]]/[[item._id]]">
+                        <li>[[item.title]]([[item.problemsCount]])</li>
                     </a>
                 </template>
-            </iron-list>
+            </ul>
         </section-module>
         <topic-dialog-module id="topicDialog" title="[[title]]" topic-to-edit="[[topicToEdit]]"></topic-dialog-module>
     </template>
@@ -97,6 +98,11 @@
                         })
                     })
                 }) 
+            }
+
+            setSubtopics(st){
+                if(st[0] === null) return []
+                return st
             }
 
             delete(){

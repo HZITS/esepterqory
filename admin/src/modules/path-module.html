@@ -24,7 +24,7 @@
                 <template is="dom-repeat" items="[[path]]">
                     <a href$="[[item.link]]" class="layout horizontal center">
                         <iron-icon icon="icons:chevron-right"></iron-icon>
-                        [[item.title]]
+                        [[setTitle(item.title)]]
                     </a>
                 </template>
             </iron-selector>
@@ -41,6 +41,15 @@
                         type: Array,
                         statePath: 'path'
                     }
+                }
+            }
+
+            setTitle(title){
+                if(!title) return
+                if(title.length < (this.max || 25)) {
+                    return title
+                } else {
+                    return title.substring(0, (this.max || 25)) + '...'
                 }
             }
         }

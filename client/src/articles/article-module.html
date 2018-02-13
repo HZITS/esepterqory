@@ -33,13 +33,6 @@
             }
         </style>
         <div class="head layout horizontal justified">
-            <template is="dom-if" if="[[data]]">
-                <div></div>
-                <div class="layout horizontal center">
-                    <iron-icon class="edit" on-click="edit" icon="icons:create"></iron-icon>
-                    <iron-icon class="edit" on-click="delete" icon="icons:delete"></iron-icon>
-                </div>
-            </template>
         </div>  
         <div class="body">
             <template is="dom-if" if="[[data]]">
@@ -62,6 +55,11 @@
                     },
                     article: Object
                 }
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+                this.logged = Cookies.get('logged')
             }
 
             dataChanged(data){

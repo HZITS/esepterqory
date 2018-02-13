@@ -1,12 +1,12 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="redux-store.html">
+<link rel="import" href="pages-module.html">
 
 <dom-module id="problems-cell-module">
     <template>
         <style include="shared-styles">
             :host{
-                padding: 8px 8px 8px 16px;
+                padding: 8px 16px;
                 border-bottom: 1px solid var(--paper-grey-300);
             }
 
@@ -41,14 +41,13 @@
         <div class="wrapper">
             <div class="head layout horizontal justified">
                 <div class="title">[[problem.number]]</div>
-                <!--<a target="_blank" href$="/api/download/problem/[[problem._id]]">
+                <a target="_blank" href$="/api/download/problem/[[problem._id]]">
                     <iron-icon icon="icons:file-download"></iron-icon>
-                </a>-->
+                </a>
             </div>
-          
             <div id="des"></div>
             <template is="dom-repeat" items="[[problem.topics]]">
-                <a class="topic" href$="/[[section]]/[[item._id]]/1">[[item.title]]</a>
+                <a class="topic" href$="/[[section]]/[[item._id]]">[[item.title]]</a>
             </template>
         </div>
     </template>

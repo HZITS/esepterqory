@@ -10,23 +10,21 @@
                 height: 40px;
                 line-height: 40px;
                 padding-left: 16px;
-                background-color: var(--paper-grey-100);
-                color: var(--paper-grey-600);
-                border-bottom: 1px solid var(--paper-grey-300)
+                background-color: var(--app-main-color);
+                color: white;
             }
             a:hover{
                 color: black
             }
         </style>
+        <iron-meta key="path" value="{{path}}"></iron-meta>
         <div class="head layout horizontal center">
-            <a href="/home">
-                <iron-icon icon="icons:home"></iron-icon>
-            </a>
-            <iron-selector  class="layout horizontal center">
+            <iron-icon icon="icons:home"></iron-icon>
+            <iron-selector  class="layout horizontal center" selected="{{selectedFragmentIndex}}">
                 <template is="dom-repeat" items="[[path]]">
                     <a href$="[[item.link]]" class="layout horizontal center">
                         <iron-icon icon="icons:chevron-right"></iron-icon>
-                        [[item.title]]
+                        [[setTitle(item.title)]]
                     </a>
                 </template>
             </iron-selector>
@@ -43,6 +41,15 @@
                         type: Array,
                         statePath: 'path'
                     }
+                }
+            }
+
+            setTitle(title){
+                if(!title) return
+                if(title.length < (this.max || 25)) {
+                    return title
+                } else {
+                    return title.substring(0, (this.max || 25)) + '...'
                 }
             }
         }

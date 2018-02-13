@@ -31,18 +31,18 @@
         <isw-dialog id="dialog" with-backdrop>
             <div class="head">
                 <div title>
-                    <template is="dom-if" if="[[!edit]]">Ноав</template>
-                    <template is="dom-if" if="[[edit]]">авыа </template>
+                    <template is="dom-if" if="[[!edit]]">Жаңа мақала</template>
+                    <template is="dom-if" if="[[edit]]">Мақаланы өзгерту</template>
                 </div>
             </div>
             <div class="body">
                 <paper-input no-label-float label="Title" value="{{title}}"></paper-input>
                 <editor-module placeholder="article" id="article"></editor-module> 
                 <template is="dom-if" if="[[!edit]]"> 
-                     <div class="mainButton" on-click="add">Добавить</div>
+                     <div class="mainButton" on-click="add">Қосу</div>
                 </template>
                 <template is="dom-if" if="[[edit]]"> 
-                    <div class="mainButton" on-click="save">Сохранить</div>
+                    <div class="mainButton" on-click="save">Сақтау</div>
                 </template>
             </div>
         </isw-dialog>

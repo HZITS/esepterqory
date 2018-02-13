@@ -19,6 +19,7 @@
             title="[[problem.title]]"
             button-title="[[problem.buttonTitle]]"  
             event="add-problem"
+            max="50"
         >   
             <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{currentProblem}}">
                 <template>
@@ -93,8 +94,8 @@
                 _ => {
                     if(topic.path.split('/').length > 1){
                         this.problem = {
-                            title: "Задачи в: " + topic.title,
-                            buttonTitle: 'Добавить задачу'
+                            title: topic.title + " тақырыбындағы есептер",
+                            buttonTitle: 'Қосу'
                         } 
                     } else {
                         this.problem = null

@@ -19,7 +19,18 @@
                 background-color: var(--paper-grey-100);
                 border-bottom: 1px solid var(--paper-grey-300);
                 flex: 0 0 40px;
-                padding-right: 16px;
+            }
+
+            .addButton{
+                color: var(--app-main-color);
+                padding: 8px 8px 8px 16px;
+                line-height: 30px;
+                flex: 0 0 30px;
+            }
+
+            .addButton:hover{
+                 background-color: #E3F2FD;
+                 cursor: pointer;
             }
 
             .list{
@@ -27,7 +38,8 @@
                 overflow: auto        
             }
             .footer{
-                flex: 0 0 40px;           
+                flex: 0 0 auto;           
+                max-height: 40px
             }
             a:hover{
                 color: black;
@@ -36,13 +48,17 @@
 
         </style>
         <div class="head layout horizontal center justified">
-            <template is="dom-if" if="{{showTitle}}">
-                <div class="title">[[title]]</div>
-            </template>
-            <template is="dom-if" if="[[titleLink]]">
-                <a class="title" href$="[[link]]">[[titleLink]]</a>
-            </template>  
+            <div class="title">[[setTitle(title)]]</div>
+            <div class="actions"> 
+                <slot name="actions"></slot>
+            </div>
         </div>  
+        <template is="dom-if" if="[[buttonTitle]]">
+            <div class="addButton layout horizontal center" on-click="addButtonTapped">
+                <iron-icon icon="icons:add"></iron-icon>
+                <div>[[buttonTitle]]</div>
+            </div>
+        </template>
         <div class="list" id="list">
             <slot name="list"></slot>
         </div>
@@ -63,6 +79,16 @@
                     buttonTitle: String,
                     event: String,
                     showTitle: Boolean,
+                    max: Number
+                }
+            }
+
+            setTitle(title){
+                if(!title) return
+                if(title.length < (this.max || 25)) {
+                    return title
+                } else {
+                    return title.substring(0, (this.max || 25)) + '...'
                 }
             }
         

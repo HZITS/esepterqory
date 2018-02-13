@@ -143,23 +143,19 @@ declare namespace Polymer {
    *   <template>
    *
    *     <div> Employee list: </div>
-   *     <dom-repeat id="employeeList" items="{{employees}}">
-   *       <template>
+   *     <template is="dom-repeat" id="employeeList" items="{{employees}}">
    *         <div>First name: <span>{{item.first}}</span></div>
-   *           <div>Last name: <span>{{item.last}}</span></div>
-   *           <button on-click="toggleSelection">Select</button>
-   *       </template>
-   *     </dom-repeat>
+   *         <div>Last name: <span>{{item.last}}</span></div>
+   *         <button on-click="toggleSelection">Select</button>
+   *     </template>
    *
    *     <array-selector id="selector" items="{{employees}}" selected="{{selected}}" multi toggle></array-selector>
    *
    *     <div> Selected employees: </div>
-   *     <dom-repeat items="{{selected}}">
-   *       <template>
+   *     <template is="dom-repeat" items="{{selected}}">
    *         <div>First name: <span>{{item.first}}</span></div>
    *         <div>Last name: <span>{{item.last}}</span></div>
-   *       </template>
-   *     </dom-repeat>
+   *     </template>
    *
    *   </template>
    *
@@ -167,26 +163,20 @@ declare namespace Polymer {
    * ```
    *
    * ```js
-   * class EmployeeList extends Polymer.Element {
-   *  static get is() { return 'employee-list'; }
-   *  static get properties() {
-   *    return {
-   *      employees: {
-   *        value() {
-   *          return [
-   *            {first: 'Bob', last: 'Smith'},
-   *            {first: 'Sally', last: 'Johnson'},
-   *            ...
-   *          ];
-   *        }
-   *      }
-   *    };
-   *  }
-   *  toggleSelection(e) {
-   *    let item = this.$.employeeList.itemForElement(e.target);
-   *    this.$.selector.select(item);
-   *  }
-   * }
+   * Polymer({
+   *   is: 'employee-list',
+   *   ready() {
+   *     this.employees = [
+   *         {first: 'Bob', last: 'Smith'},
+   *         {first: 'Sally', last: 'Johnson'},
+   *         ...
+   *     ];
+   *   },
+   *   toggleSelection(e) {
+   *     let item = this.$.employeeList.itemForElement(e.target);
+   *     this.$.selector.select(item);
+   *   }
+   * });
    * ```
    */
   class ArraySelector extends

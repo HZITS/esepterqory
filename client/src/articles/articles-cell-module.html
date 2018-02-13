@@ -4,7 +4,7 @@
     <template>
         <style include="shared-styles">
             :host{
-                padding: 8px 8px 8px 16px;
+                padding: 8px 16px;
                 border-bottom: 1px solid var(--paper-grey-300);
             }
 
@@ -39,9 +39,9 @@
         <div class="wrapper">
             <div class="head layout horizontal justified">
                 <div class="title">[[article.title]]</div>
-                <!--<a target="_blank" href$="/api/download/problem/[[problem._id]]">
+                <a target="_blank" href$="/api/download/article/[[problem._id]]">
                     <iron-icon icon="icons:file-download"></iron-icon>
-                </a>-->
+                </a>
             </div>
           
             <div id="des"></div>

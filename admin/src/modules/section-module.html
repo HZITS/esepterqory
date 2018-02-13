@@ -39,7 +39,8 @@
                 overflow: auto        
             }
             .footer{
-                flex: 0 0 40px;           
+                flex: 0 0 auto;           
+                max-height: 40px
             }
             a:hover{
                 color: black;
@@ -48,12 +49,7 @@
 
         </style>
         <div class="head layout horizontal center justified">
-            <template is="dom-if" if="{{showTitle}}">
-                <div class="title">[[title]]</div>
-            </template>
-            <template is="dom-if" if="[[titleLink]]">
-                <a class="title" href$="[[link]]">[[titleLink]]</a>
-            </template>  
+            <div class="title">[[setTitle(title)]]</div>
             <div class="actions"> 
                 <slot name="actions"></slot>
             </div>
@@ -84,6 +80,16 @@
                     buttonTitle: String,
                     event: String,
                     showTitle: Boolean,
+                    max: Number
+                }
+            }
+
+            setTitle(title){
+                if(!title) return
+                if(title.length < (this.max || 25)) {
+                    return title
+                } else {
+                    return title.substring(0, (this.max || 25)) + '...'
                 }
             }
         

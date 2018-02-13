@@ -71,7 +71,6 @@
 
             pageChanged(p, topic, title){
 
-                console.log('page in pages-module changed')
                 var page = Number(p)
                 if(!topic) return
                 if(!page) return
@@ -80,6 +79,7 @@
                 this.pageDebouncer,
                 Polymer.Async.timeOut.after(100),
                 _ => {
+
                     const perPage = 10
                     const maxPages = 10
                     const upperBound = title == "articles" ? Math.ceil(topic.articlesCount / perPage): Math.ceil(topic.problemsCount / perPage) 
@@ -103,7 +103,6 @@
                     setTimeout(_ => {
                         this.$.selector.selected = page
                     }, 100)
-                
                 })
             }
 

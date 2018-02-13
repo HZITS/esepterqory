@@ -36,18 +36,18 @@
             <div class="head">
                 <div title>
                     <template is="dom-if" if="[[!edit]]">Жаңа есеп</template>
-                    <template is="dom-if" if="[[edit]]">Есебі өңдеу</template>
+                    <template is="dom-if" if="[[edit]]">Есепті өзгерту</template>
                 </div>
             </div>
             <div class="body">
                 <paper-input no-label-float label="Eceп нөмірі" value="{{number}}"></paper-input>
                 <editor-module placeholder="Есеп" id="problem"></editor-module>
-                <editor-module placeholder="Шешім" id="solution"></editor-module> 
+                <editor-module placeholder="Шешуі" id="solution"></editor-module> 
                 <template is="dom-if" if="[[!edit]]"> 
-                     <div class="mainButton" on-click="add">Добавить</div>
+                     <div class="mainButton" on-click="add">Қосу</div>
                 </template>
                 <template is="dom-if" if="[[edit]]"> 
-                    <div class="mainButton" on-click="save">Сохранить</div>
+                    <div class="mainButton" on-click="save">Сақтау</div>
                 </template>
             </div>
         </isw-dialog>

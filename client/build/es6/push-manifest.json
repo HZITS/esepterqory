@@ -5,6 +5,5 @@
   "src/articles/articles-module.html": {},
   "src/about/about-module.html": {},
   "src/authors/authors-module.html": {},
-  "src/feedback/feedback-module.html": {},
-  "src/home/home-module.html": {}
+  "src/feedback/feedback-module.html": {}
 }

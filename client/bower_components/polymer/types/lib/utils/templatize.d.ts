@@ -65,14 +65,6 @@ declare class TemplateInstanceBase extends
    * set to false to show them.
    */
   _showHideChildren(hide: boolean): void;
-
-  /**
-   * Stub of HTMLElement's `dispatchEvent`, so that effects that may
-   * dispatch events safely no-op.
-   *
-   * @param event Event to dispatch
-   */
-  dispatchEvent(event: Event|null): any;
 }
 
 declare namespace templateInfo {
@@ -129,15 +121,6 @@ declare namespace Polymer {
      *   from `instance.parentModel` in cases where template instance nesting
      *   causes an inner model to shadow an outer model.
      *
-     * When `options.forwardHostProp` is declared as an option, any properties
-     * referenced in the template will be automatically forwarded from the host of
-     * the `<template>` to instances, with the exception of any properties listed in
-     * the `options.instanceProps` object.  `instanceProps` are assumed to be
-     * managed by the owner of the instances, either passed into the constructor
-     * or set after the fact.  Note, any properties passed into the constructor will
-     * always be set to the instance (regardless of whether they would normally
-     * be forwarded from the host).
-     *
      * Note that the class returned from `templatize` is generated only once
      * for a given `<template>` using `options` from the first call for that
      * template, and the cached class is returned for all subsequent calls to
@@ -150,7 +133,7 @@ declare namespace Polymer {
      * @returns Generated class bound to the template
      *   provided
      */
-    function templatize(template: HTMLTemplateElement, owner?: Polymer.PropertyEffects|null, options?: object|null): {new(): TemplateInstanceBase};
+    function templatize(template: HTMLTemplateElement, owner: Polymer.PropertyEffects, options?: object|null): {new(): TemplateInstanceBase};
 
 
     /**

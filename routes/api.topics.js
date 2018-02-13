@@ -57,6 +57,7 @@ router.route('/:id')
             }
             res.json(topic)
         })
+
     } else {
         Topic.findById(req.params.id, (err, topic) => {
             if(err || !topic) {

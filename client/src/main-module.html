@@ -19,21 +19,16 @@
 <link rel="lazy-import" href="articles/articles-module.html">
 <link rel="lazy-import" href="topics/topics-module.html">
 <link rel="lazy-import" href="sources/sources-module.html">
-<link rel="lazy-import" href="home/home-module.html">
-<link rel="lazy-import" href="feedback/feedback-module.html">
-<link rel="lazy-import" href="authors/authors-module.html">
-<link rel="lazy-import" href="about/about-module.html">
-
 
 <link rel="import" href="modules/path-module.html">
 <link rel="import" href="modules/section-module.html">
 <link rel="import" href="modules/shared-styles.html">
 <link rel="import" href="modules/redux-store.html">
 
-
 <script src="math-tex/mathjax-loader.js"></script>
 <script src="math-tex/math-tex.js"></script>
 <script src="../bower_components/ajax/dist/ajax.min.js"></script>
+<script src="../bower_components/js-cookie/src/js.cookie.js"></script>
 
 <dom-module id="main-module">
     <template>
@@ -45,17 +40,15 @@
             }
 
             app-toolbar{
-                background-color: var(--paper-grey-100);
+                background-color: var(--app-main-color);
                 height:40px;
-                color: var(--app-main-color);
+                color: white;
                 font-size: 16px;
                 font-weight: 300
             }
-           
-            iron-pages{
+            iron-sections{
                 height: calc(100vh - 122px)
             }
-
             .footer{
                 height:38px;
                 line-height: 38px;
@@ -70,15 +63,25 @@
                 color: black
             }
             .title{
+                 color: white;
                  font-weight: 500;
                  cursor: pointer;
                  font-size: 20px;
             }
-          
+            .tabs{
+                margin-left: 64px;
+            }
+            .tabs * {
+                margin-left: 8px;
+            }
+            .iron-selected{
+                border-bottom: 2px solid white;
+            }
+			iron-pages{
+				height: calc(100vh - 122px)
+			}
         </style>
-        <app-location 
-        route="{{route}}"
-        ></app-location>
+        <app-location route="{{route}}"></app-location>
         <app-route
             route="{{route}}"
             pattern="/:section"
@@ -98,7 +101,12 @@
         >
         </app-route>
         <app-toolbar>
-            <a href="/home" class="title">EsepterQory.kz</a>
+            <div on-click="home" class="title">EsepterQory.kz</div>
+            <iron-selector class="tabs" selected="[[section]]" attr-for-selected="name">
+                <a href="/articles/topics" name="articles">Әдістемелік нұсқаулар</a>
+                <a href="/topics/topics" name="topics">Тақырыптар бойынша</a>
+                <a href="/sources/sources" name="sources">Дереккөздер бойынша</a>
+            </iron-selector>
         </app-toolbar>
         <path-module class="head"></path-module>
         <iron-pages 
@@ -114,131 +122,130 @@
             <authors-module name="authors"></authors-module>
             <feedback-module name="feedback"></feedback-module>
         </iron-pages>
-        <footer class="footer layout horizontal center-justified">
-            <a href="/about">О проекте</a>
-            <a href="/authors">Авторы</a>
-            <a href="/feedback">Предложения</a>
-        </footer>
+		<footer class="footer layout horizontal center-justified">
+			<a href="/about">Жоба туралы</a>
+			<a href="/authors">Авторлары</a>
+			<a href="/feedback">Кері байланыс</a>
+		</footer>
     </template>
-
     <script>
-        class MainModule extends ReduxMixin(Polymer.Element) {
-            static get is() { return 'main-module'; }
+		class MainModule extends ReduxMixin(Polymer.Element) {
+			static get is() { return 'main-module'; }
 
-            static get properties() {
-                return {
-                    section: {
-                        type: String,
-                        observer: 'sectionChanged',
-                    },
-                    topicId: String,
-                    routeData: Object,
-                    subrouteData: Object,
-                    subsubrouteData: Object
-                }
-            }
+			static get properties() {
+				return {
+					section: {
+						type: String,
+						observer: 'sectionChanged',
+					},
+					topicId: String,
+					routeData: Object,
+					subrouteData: Object,
+					subsubrouteData: Object
+				}
+			}
 
-            static get observers() {
-                return [
-                    'routeSectionChanged(routeData.section)',
-                    'routeTopicIdChanged(subrouteData.topicId)',
-                    'routePageChanged(subsubrouteData.page)',
-                    'topicIdChanged(topicId, section)',
-                    'pageChanged(page, section)',
-                ]
-            }
+			static get observers() {
+				return [
+					'routeSectionChanged(routeData.section)',
+					'routeTopicIdChanged(subrouteData.topicId)',
+					'routePageChanged(subsubrouteData.page)',
+					'topicIdChanged(topicId, section)',
+					'pageChanged(page, section)',
+				]
+			}
 
-            routeSectionChanged(section) {
-                this.sectionDebouncer = Polymer.Debouncer.debounce(
-                this.sectionDebouncer,
-                Polymer.Async.timeOut.after(100),
-                _ => {
-                    this.section = section || 'home'
-                })
-            }
+			routeSectionChanged(section) {
+				this.sectionDebouncer = Polymer.Debouncer.debounce(
+				this.sectionDebouncer,
+				Polymer.Async.timeOut.after(100),
+				_ => {
+					this.section = section || 'topics'
+				})
+			}
 
-            routeTopicIdChanged(topicId) {
-                this.topicIdDebouncer = Polymer.Debouncer.debounce(
-                this.topicIdDebouncer,
-                Polymer.Async.timeOut.after(100),
-                _ => {
-                    this.topicId = topicId
-                })
-            }
+			routeTopicIdChanged(topicId) {
+				this.topicIdDebouncer = Polymer.Debouncer.debounce(
+				this.topicIdDebouncer,
+				Polymer.Async.timeOut.after(100),
+				_ => {
+					this.topicId = topicId || 'topics'
+				})
+			}
 
-            topicIdChanged(topicId, section){
+			topicIdChanged(topicId, section){
 
-                if(!topicId) return 
-                if(!section) return
+				if(!topicId) return 
+				if(!section) return
 
-                console.log(topicId)
-                ajax().get("/api/topics/" + topicId, { populate: true})
-                .then( res => {
+				console.log(topicId)
+				ajax().get("/api/topics/" + topicId, { populate: true})
+				.then( res => {
 
-                    if(res == "doesn't exist") {
-                        return
-                    }
+					if(res == "doesn't exist") {
+						return
+					}
 
-                    var topic = res
-                    if (!(topic.subtopics instanceof Array)){
-                        topic.subtopics = [topic.subtopics]
-                    }
+					var topic = res
+					if (!(topic.subtopics instanceof Array)){
+						topic.subtopics = [topic.subtopics]
+					}
 
-                    this.dispatch({
-                        type: 'path',
-                        value: topic.topicsPath.map(el => {
-                            return {
-                                _id: el._id,
-                                title: el.title,
-                                link: "/" + this.section +"/" + el._id
-                            }
-                        })
-                    })
+					this.dispatch({
+						type: 'path',
+						value: topic.topicsPath.map(el => {
+							return {
+								_id: el._id,
+								title: el.title,
+								link: "/" + this.section +"/" + el._id
+							}
+						})
+					})
 
-                    this.dispatch({
-                        type: this.section + 'Topic',
-                        value: topic
-                    })
-                })
-            }
+					this.dispatch({
+						type: this.section + 'Topic',
+						value: topic
+					})
+				})
+			}
 
-            routePageChanged(page) {
-                this.page = page
-            }
+			routePageChanged(page) {
+				this.page = page
+			}
 
-            pageChanged(page, section){
-                if(!section) return
-                this.pageDebouncer = Polymer.Debouncer.debounce(
-                this.pageDebouncer,
-                Polymer.Async.timeOut.after(100),
-                _ => {
-                    console.log('page ',page)
-                    this.dispatch({
-                        type: this.section + 'Page',
-                        value: page || '1'
-                    })
-                })
-            }
+			pageChanged(page, section){
+				if(!section) return
+				this.pageDebouncer = Polymer.Debouncer.debounce(
+				this.pageDebouncer,
+				Polymer.Async.timeOut.after(100),
+				_ => {
+					console.log('page ',page)
+					this.dispatch({
+						type: this.section + 'Page',
+						value: page || '1'
+					})
+				})
+			}
 
-            sectionChanged(section) {
-                if(!section) return
+			sectionChanged(section) {
+				if(!section) return
 
-                this.dispatch({
-                    type: 'section',
-                    value: section || 'topics'
-                })
-                console.log(section)
+				this.dispatch({
+					type: 'section',
+					value: section || 'topics'
+				})
+				console.log(section)
 
-                var resolvedsectionUrl = this.resolveUrl(section + '/' + section + '-module.html')
+				var resolvedsectionUrl = this.resolveUrl(section + '/' + section + '-module.html')
 
-                Polymer.importHref(
-                    resolvedsectionUrl,
-                    null,
-                    null,
-                    true)  
-            }
-        }
+				Polymer.importHref(
+					resolvedsectionUrl,
+					null,
+					null,
+					true)  
+			}
+		}
 
-        window.customElements.define(MainModule.is, MainModule);
+    	window.customElements.define(MainModule.is, MainModule);
     </script>
 </dom-module>
