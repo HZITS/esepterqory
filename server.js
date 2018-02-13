@@ -54,7 +54,7 @@ app.use(subdomain('admin', require('./routes/admin')))
 app.get('/*', prpl.makeHandler('.', {
 	builds: [
 		// {name: 'client/build/es6', browserCapabilities: ['es2015', 'push']},
-		{name: 'client/build/fallback'}
+		{name: 'client/build/es5'}
 	]
 }))
 

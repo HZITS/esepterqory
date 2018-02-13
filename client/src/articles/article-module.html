@@ -69,7 +69,6 @@
                 ajax().get("/api/articles/id/" + data._id)
                 .then( res => {
                     this.article = res
-                    console.log(res.article)
                     this.shadowRoot.querySelector("#article").innerHTML = res.article
                 })
             }
@@ -79,7 +78,6 @@
             }
 
             delete(){
-                console.log(this.article.path)
                 ajax().delete("/api/articles/id/" + this.article._id, {
                     data: {
                         path: this.article.path

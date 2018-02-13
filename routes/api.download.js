@@ -45,6 +45,44 @@ router.route('/problem/:id')
     })
 })
 
+router.route('/article/:id')
+.get((req, res) => {
+    res.set({
+        "Content-Type": "application/octet-stream",
+        "Content-Disposition": "attachment"
+    })
+    Problem.findById(req.params.id, (err, problem) => {
+
+        if(err) {
+            res.json(err)
+            return
+        }
+
+        const $ = cheerio.load(problem.problem)
+        const arr = $('editor-formula-module').toArray()
+        arr.forEach((el, index) => {
+            $(el).after("$" + $(el).attr('math') + "$")
+            $(el).remove()
+        })
+
+        math($.html(), 
+            {
+                format: ["TeX"],
+                output: 'html',
+                singleDollars: true,
+            }, 
+            {
+                html: true
+            }, 
+            (html) => {
+                pdf.create(html, null).toStream(function(err, stream){
+                    stream.pipe(res);
+                });
+        })
+
+    })
+})
+
 router.route('/topic/:id/:page')
 .get((req,res) => {
 

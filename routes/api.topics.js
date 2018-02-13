@@ -43,7 +43,8 @@ router.route('/:id')
         .populate({
             path: 'subtopics',
             model: 'Topic',
-            select: '_id title prepath problemsCount articlesCount'
+            select: '_id title prepath problemsCount articlesCount',
+            options: { sort: { 'title': 1 } }
         })
         .populate({
             path: 'topicsPath',
