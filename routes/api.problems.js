@@ -69,10 +69,10 @@ router.route('/topic/:topicId/:pageId')
         model: 'Topic',
         select: '_id title'
     })
-    .select('problem topics number _id createdAt')
+    .select('problem topics number _id')
     .skip(perPage * (req.params.pageId - 1))
     .limit(perPage)
-    .sort({createdAt: -1})
+    .sort({number: -1})
     .exec((err, problems) => {
         if(err) {
             res.json(err)
