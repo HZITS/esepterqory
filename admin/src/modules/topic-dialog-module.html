@@ -23,17 +23,17 @@
         <isw-dialog id="dialog" with-backdrop>
             <div class="head">
                 <div title>
-                    <template is="dom-if" if="[[!edit]]"> fdsfds</template>
-                    <template is="dom-if" if="[[edit]]"> lego</template>
+                    <template is="dom-if" if="[[!edit]]">Жаңа тақырып</template>
+                    <template is="dom-if" if="[[edit]]">Тақырыпты өзгерту</template>
                 </div>
             </div>
             <div class="body">
                  <paper-input no-label-float label="Название темы" value="{{topicTitle}}"></paper-input>
                  <template is="dom-if" if="[[!edit]]"> 
-                      <div class="mainButton" on-click="add">Добавить</div>
+                      <div class="mainButton" on-click="add">Қосу</div>
                  </template>
                  <template is="dom-if" if="[[edit]]"> 
-                     <div class="mainButton" on-click="save">Сохранить</div>
+                     <div class="mainButton" on-click="save">Сақтау</div>
                  </template>
             </div>
         </isw-dialog>
@@ -88,7 +88,6 @@
                     this.topicTitle = null
                     dispatcher.dispatch('reload-topics')
                     this.$.dialog.close()
-             
                 })
         
             }

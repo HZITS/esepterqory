@@ -7,7 +7,7 @@
             :host {
               	display: block;
 				border: 1px solid var(--paper-grey-300);
-                background-color: white
+                background-color: white;
             }	
 			#editor:focus {
 				outline: none
@@ -69,7 +69,7 @@
         setHTML(html){
             this.$.editor.innerHTML = html
         }
-
+     
         editAction(e){
             const action = e.target.id
             switch (action) {
@@ -109,30 +109,37 @@
 
             imageFile.onchange = event => {
 
-            if (event.currentTarget.files.length > 0) {
+                if (event.currentTarget.files.length > 0) {
 
-                const fileToLoad = event.currentTarget.files[0];
-                const fileReader = new FileReader()
+                    const fileToLoad = event.currentTarget.files[0];
+                    const fileReader = new FileReader()
 
-                fileReader.onload = fileLoadedEvent => {
+                    fileReader.onload = fileLoadedEvent => {
 
-                const srcData = fileLoadedEvent.target.result; // base64!
+                        console.log('lego')
 
-                this.pasteHtmlAtCaret(`
-                    <img style="width: 50%;
-                    margin: 0 25%" src=${srcData}>
-                `)
+                        const srcData = fileLoadedEvent.target.result; // base64!
 
+                        const img = document.createElement('img')
+                        img.style = `
+                            resize:both;
+                            overflow:auto;
+                            display:block;
+                            margin:auto;
+                        `
+                        img.src = srcData
+                        // div.contentEditable = false
+                       
+                        this.$.editor.appendChild(img)
+                    
+                    }
+
+                    fileReader.readAsDataURL(fileToLoad)
                 }
-
-                fileReader.readAsDataURL(fileToLoad)
-
             }
 
-            }
-
-            imageFile.click();
-            return false;
+            imageFile.click()
+            return false
         }
 
   }

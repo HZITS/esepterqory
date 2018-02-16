@@ -56,7 +56,10 @@
 			static get properties(){
 				return {
 					text: String,
-					hasReplaced: Boolean,
+					isMathSet: {
+						type: Boolean,
+						value: false 
+					},
 					block: {
 						type: Boolean,
 						value: false
@@ -81,13 +84,16 @@
 
 				this.$.input.onkeydown = (e) => {
 
-					if (e.which == 13 && e.shiftKey == false && !this.hasReplaced) {
+					if (e.which == 13 && e.shiftKey == false && !this.isMathSet) {
 						this.setAttribute('math',this.bodyText)
 						this.$.input.onkeydown = null
-						this.dispatchEvent(new CustomEvent('formula-added', {bubbles: true, composed: true}))
+						this.isMathSet = true
 						return
 					}
 				}
+				this.addEventListener('mouseover', e => {
+					console.log(e)
+				})
 			}
 
 			displayChanged(d){
