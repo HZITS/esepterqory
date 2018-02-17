@@ -17,11 +17,9 @@
             <topics-tree-module title="articles" slot="section1"></topics-tree-module>
             <section-module
                 slot="section2"
-                show-title
                 title="[[article.title]]"
                 style="width:500px"
-                button-title="[[article.buttonTitle]]"  
-                event="add-article"
+                max="37"
             >   
                 <iron-list slot="list" id="articles" items="[[articles]]" selection-enabled selected-item="{{currentArticle}}">
                     <template>

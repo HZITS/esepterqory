@@ -16,7 +16,7 @@
             show-title
             style="width:500px"
             title="[[problem.title]]"
-            max="50"
+            max="37"
         >   
             <div slot="actions" class="layout horizontal">
                 <a target="_blank" href$="/api/download/topic/[[topic._id]]/[[page]]">
@@ -95,7 +95,7 @@
                 _ => {
                     if(topic.path.split('/').length > 1){
                         this.problem = {
-                            title: topic.title + " тақырыбындағы есептер",
+                            title: topic.title + " есептері",
                         } 
                     } else {
                         this.problem = null
