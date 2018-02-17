@@ -20,6 +20,7 @@
     "passport-local-mongoose": "^4.4.0",
     "phantom-html2pdf": "^4.0.1",
     "prpl-server": "^1.0.0",
+    "rendertron-middleware": "^0.1.2",
     "shortid-36": "^0.1.2",
     "webshot": "^0.18.0"
   }

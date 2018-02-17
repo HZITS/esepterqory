@@ -72,7 +72,7 @@ router.route('/topic/:topicId/:pageId')
     .select('problem topics number _id')
     .skip(perPage * (req.params.pageId - 1))
     .limit(perPage)
-    .sort({number: -1})
+    .sort({number: 1})
     .exec((err, problems) => {
         if(err) {
             res.json(err)
