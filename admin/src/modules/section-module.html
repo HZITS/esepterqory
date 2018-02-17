@@ -86,10 +86,10 @@
 
             setTitle(title){
                 if(!title) return
-                if(title.length < (this.max || 25)) {
+                if(title.length < (this.max || 17)) {
                     return title
                 } else {
-                    return title.substring(0, (this.max || 25)) + '...'
+                    return title.substring(0, (this.max || 17)) + '...'
                 }
             }
         
