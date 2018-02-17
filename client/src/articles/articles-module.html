@@ -79,7 +79,7 @@
                     this.getArticles(this.topic, 1)
                 })
             }
-
+            
             getArticles(topic, p){
 
                 if(!topic) return
@@ -93,7 +93,7 @@
 
                     if(topic.path.split('/').length > 1){
                         this.article = {
-                            title: topic.title + " дереккөздері"
+                            title: "Дереккөздері"
                         } 
                     } else {
                         this.article = null
