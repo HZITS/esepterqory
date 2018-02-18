@@ -126,7 +126,7 @@ router.route('/topic/:id/:page')
     .select('problem number')
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
-    .sort({createdAt: -1})
+    .sort({title: 1})
     .exec((err, problems) => {
         if(err) {
             res.json(err)

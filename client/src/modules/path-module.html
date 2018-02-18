@@ -10,16 +10,15 @@
                 height: 40px;
                 line-height: 40px;
                 padding-left: 16px;
-                background-color: var(--app-main-color);
-                color: white;
+                color: var(--paper-grey-600);
+                border-bottom: 1px solid var(--paper-grey-300)
             }
             a:hover{
                 color: black
             }
         </style>
-        <iron-meta key="path" value="{{path}}"></iron-meta>
         <div class="head layout horizontal center">
-            <iron-icon icon="icons:home"></iron-icon>
+            <a href="/"><iron-icon icon="icons:home"></iron-icon></a>
             <iron-selector  class="layout horizontal center" selected="{{selectedFragmentIndex}}">
                 <template is="dom-repeat" items="[[path]]">
                     <a href$="[[item.link]]" class="layout horizontal center">

@@ -5,10 +5,10 @@
 <dom-module id="problem-module">
     <template>
         <style include="shared-styles">
-            
             :host{
                 display: flex;
                 flex-direction: column;
+                height: calc(100vh - 82px)
             }
 
             .head{
@@ -31,16 +31,21 @@
                 margin-left: 8px;
                 cursor: pointer
             }
+
+            .tb{
+                border-top: 2px solid var(--paper-grey-300);
+                padding-top: 8px;
+            }
         </style>
         <div class="head layout horizontal justified">
-            <div class="title">[[title]]</div>
+            <div class="title">[[problem.number]]</div>
         </div>  
         <div class="body">
             <template is="dom-if" if="[[data]]">
-                <div class="title">Есеп</div>
-                <div id="problem"></div>
-                <div class="title">Шешуі</div>
-                <div id="solution"></div>
+                <h3 class="title">Есеп</h3>
+                <p id="problem"></p>
+                <h3 class="title tb">Шешуі</h3>
+                <p id="solution"></p>
             </template>
         </div>
     </template>
@@ -60,11 +65,6 @@
                 }
             }
 
-            connectedCallback(){
-                super.connectedCallback()
-                this.logged = Cookies.get('logged')
-            }
-
             dataChanged(data){
                if(data){
                     ajax().get("/api/problems/id/" + data._id)
@@ -74,22 +74,6 @@
                         this.shadowRoot.querySelector("#solution").innerHTML = res.solution
                    })
                }
-            }
-
-            edit(){
-                this.$.problemDialog.open()
-            }
-
-            delete(){
-                console.log(this.problem.path)
-                ajax().delete("/api/problems/id/" + this.problem._id, {
-                    data: {
-                        path: this.problem.path
-                    }
-                })
-                .then( res => {
-                    dispatcher.dispatch('reload-problems')
-                })
             }
 
         }

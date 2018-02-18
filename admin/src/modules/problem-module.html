@@ -6,32 +6,37 @@
 <dom-module id="problem-module">
     <template>
         <style include="shared-styles">
-            
-            :host{
-                display: flex;
-                flex-direction: column;
-            }
+           :host{
+               display: flex;
+               flex-direction: column;
+               height: calc(100vh - 82px)
+           }
 
-            .head{
-                flex: 0 0 40px;
-                line-height: 40px;
-                padding: 0px 16px;
-                color:var(--paper-grey-600);
-                border-bottom: 1px solid var(--paper-grey-300);
-                background-color: var(--paper-grey-100);
-            }
+           .head{
+               flex: 0 0 40px;
+               line-height: 40px;
+               padding: 0px 16px;
+               color:var(--paper-grey-600);
+               border-bottom: 1px solid var(--paper-grey-300);
+               background-color: var(--paper-grey-100);
+           }
 
-            .body{
-                flex: 1 1 auto;
-                overflow: auto;
-                padding: 16px;
-            }
+           .body{
+               flex: 1 1 auto;
+               overflow: auto;
+               padding: 16px;
+           }
 
-            .edit{
-                height: 40px;
-                margin-left: 8px;
-                cursor: pointer
-            }
+           .edit{
+               height: 40px;
+               margin-left: 8px;
+               cursor: pointer
+           }
+
+           .tb{
+               border-top: 2px solid var(--paper-grey-300);
+               padding-top: 8px;
+           }
         </style>
         <div class="head layout horizontal justified">
             <div class="title">[[title]]</div>
@@ -44,10 +49,10 @@
         </div>  
         <div class="body">
             <template is="dom-if" if="[[data]]">
-                <div class="title">Есеп</div>
-                <div id="problem"></div>
-                <div class="title">Шешуі</div>
-                <div id="solution"></div>
+                <h3 class="title">Есеп</h3>
+                <p id="problem"></p>
+                <h3 class="title tb">Шешуі</h3>
+                <p id="solution"></p>
             </template>
         </div>
         <problem-dialog-module id="problemDialog" problem-to-edit="[[problem]]"></problem-dialog-module>
@@ -66,11 +71,6 @@
                     },
                     problem: Object
                 }
-            }
-
-            connectedCallback(){
-                super.connectedCallback()
-                this.logged = Cookies.get('logged')
             }
 
             dataChanged(data){

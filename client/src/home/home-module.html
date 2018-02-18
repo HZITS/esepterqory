@@ -1,0 +1,28 @@
+<dom-module id="home-module">
+    <template>
+        <style include="shared-styles">
+        </style>
+    </template>
+    <script>
+        class HomeModule extends Polymer.Element {
+
+            static get is() { return 'home-module' }
+
+            static get properties() {
+                return {
+                }
+            }
+
+            static get observers() {
+                return [
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+            }
+
+        }
+        customElements.define(HomeModule.is, HomeModule);
+    </script>
+</dom-module>

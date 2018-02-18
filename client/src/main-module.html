@@ -42,33 +42,19 @@
             }
 
             app-toolbar{
-                background-color: var(--app-main-color);
                 height:40px;
-                color: white;
+                color: var(--paper-grey-400);
                 font-size: 16px;
-                font-weight: 300
             }
             iron-sections{
                 height: calc(100vh - 122px)
             }
-            .footer{
-                height:38px;
-                line-height: 38px;
-                border-top: 2px solid var(--paper-grey-300);
-                background-color: var(--paper-grey-200)
-            }
-            .footer * {
-                padding: 0px 16px;
-                color: var(--paper-grey-600)
-            }
-            .footer *:hover{
-                color: black
-            }
+       
             .title{
-                 color: white;
-                 font-weight: 500;
-                 cursor: pointer;
-                 font-size: 20px;
+				color: var(--app-main-color);
+                font-weight: 500;
+                cursor: pointer;
+                font-size: 20px;
             }
             .tabs{
                 margin-left: 64px;
@@ -76,11 +62,13 @@
             .tabs * {
                 margin-left: 8px;
             }
-            .iron-selected{
-                border-bottom: 2px solid white;
+            a.iron-selected{
+                border-bottom: 2px solid var(--paper-grey-600);
+				padding-bottom: 2px;
+				color: var(--paper-grey-600)
             }
 			iron-pages{
-				height: calc(100vh - 122px)
+				height: calc(100vh - 82px)
 			}
         </style>
         <app-location route="{{route}}"></app-location>
@@ -103,11 +91,11 @@
         >
         </app-route>
         <app-toolbar>
-            <div on-click="home" class="title">EsepterQory.kz</div>
+            <a href="/" class="title">EsepterQory.kz</a>
             <iron-selector class="tabs" selected="[[section]]" attr-for-selected="name">
-                <a href="/articles/articles" name="articles">Әдістемелік нұсқаулар</a>
-                <a href="/topics/topics" name="topics">Тақырыптар бойынша</a>
-                <a href="/sources/sources" name="sources">Дереккөздер бойынша</a>
+                <a href="/articles/articles" name="articles">Теория</a>
+                <a href="/topics/topics" name="topics">Тақырыптар</a>
+                <a href="/sources/sources" name="sources">Дереккөздер</a>
             </iron-selector>
         </app-toolbar>
         <path-module class="head"></path-module>
@@ -124,11 +112,6 @@
             <authors-module name="authors"></authors-module>
             <feedback-module name="feedback"></feedback-module>
         </iron-pages>
-		<footer class="footer layout horizontal center-justified">
-			<a href="/about">Жоба туралы</a>
-			<a href="/authors">Авторлары</a>
-			<a href="/feedback">Кері байланыс</a>
-		</footer>
     </template>
     <script>
 		class MainModule extends ReduxMixin(Polymer.Element) {
@@ -162,7 +145,7 @@
 				this.sectionDebouncer,
 				Polymer.Async.timeOut.after(100),
 				_ => {
-					this.section = section || 'topics'
+					this.section = section || 'home'
 				})
 			}
 
@@ -171,14 +154,21 @@
 				this.topicIdDebouncer,
 				Polymer.Async.timeOut.after(100),
 				_ => {
-					this.topicId = topicId || 'topics'
+					this.topicId = topicId 
 				})
 			}
 
 			topicIdChanged(topicId, section){
 
-				if(!topicId) return 
+				if(!topicId) return
 				if(!section) return
+				if(section == 'home'){
+					this.dispatch({
+						type: 'path',
+						value: []
+					})
+					return
+				}
 
 				console.log(topicId)
 				ajax().get("/api/topics/" + topicId, { populate: true})
@@ -234,7 +224,7 @@
 
 				this.dispatch({
 					type: 'section',
-					value: section || 'topics'
+					value: section || 'home'
 				})
 				console.log(section)
 
