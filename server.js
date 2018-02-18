@@ -13,10 +13,10 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
 var app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-// app.use(rendertron.makeMiddleware({
-//   proxyUrl: 'http://render-tron.appspot.com',
-//   injectShadyDom: true
-// }));
+app.use(rendertron.makeMiddleware({
+  proxyUrl: 'http://render-tron.appspot.com',
+  injectShadyDom: true
+}));
 
 app.post('/api/topics', isAdmin)
 app.post('/api/problems', isAdmin)
