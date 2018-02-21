@@ -85,7 +85,9 @@ router.route('/topic/:id/:page')
 
     const perPage = 10
 
-    Problem.find()
+    Problem.find({
+        path: req.params.id
+    })
     .select('problem number')
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)

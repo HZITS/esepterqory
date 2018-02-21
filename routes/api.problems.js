@@ -64,7 +64,9 @@ router.route('/topic/:topicId/:pageId')
 
     const perPage = 10
 
-    Problem.find()
+    Problem.find({
+        path: req.params.topicId
+    })
     .populate({
         path: 'topics',
         model: 'Topic',
