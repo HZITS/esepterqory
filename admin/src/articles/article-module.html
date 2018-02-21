@@ -66,11 +66,6 @@
                 }
             }
 
-            connectedCallback(){
-                super.connectedCallback()
-                this.logged = Cookies.get('logged')
-            }
-
             dataChanged(data){
 
                 if(!data) return

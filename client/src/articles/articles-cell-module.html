@@ -7,17 +7,8 @@
                 padding: 8px 16px;
                 border-bottom: 1px solid var(--paper-grey-300);
             }
-
-            .wrapper:hover iron-icon.edit{
-                display: inline
-            }
             iron-icon{
                 color: var(--paper-grey-600)
-            }
-            .edit{
-                display: none;
-                margin-right: 8px;
-                cursor: pointer
             }
             #des{
                 padding: 8px 0px;
@@ -35,12 +26,25 @@
             .title{
                 font-weight: 500
             }
+            .seen{
+                font-size: 11px;
+                color: var(--paper-grey-500)
+            }
+            .seen iron-icon{
+                color: var(--paper-grey-400);
+                width: 16px;
+                margin-right: 4px
+            }
+            .dl{
+                font-size: 12px;
+                color: var(--paper-grey-500)
+            }
         </style>
         <div class="wrapper">
             <div class="head layout horizontal justified">
                 <div class="title">[[article.title]]</div>
-                <a target="_blank" href$="/api/download/article/[[article._id]]">
-                    <iron-icon icon="icons:file-download"></iron-icon>
+                <a class="dl" target="_blank" href$="/api/download/article/[[article._id]]">
+                    [[article.downloaded]]<iron-icon icon="icons:file-download"></iron-icon>
                 </a>
             </div>
           
@@ -48,6 +52,10 @@
             <template is="dom-repeat" items="[[article.topics]]">
                 <a class="topic" href$="/articles/[[item._id]]">[[item.title]]</a>
             </template>
+            <div class="seen layout horizontal center">
+                <iron-icon icon="icons:visibility"></iron-icon>
+                [[article.seen]]
+            </div>
         </div>
     </template>
     <script>

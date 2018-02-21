@@ -7,7 +7,15 @@ const articleSchema = new mongoose.Schema({
     dif: Number,
     path: [String],
     topics: [String],
-    topic: String
+    topic: String,
+    seen: {
+        type: Number,
+        default: 0
+    },
+    downloaded: {
+        type: Number,
+        default: 0
+    }
 },{
   timestamps: true,
   minimize: true

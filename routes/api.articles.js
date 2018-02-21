@@ -65,7 +65,7 @@ router.route('/topic/:topicId/:pageId')
         model: 'Topic',
         select: '_id title'
     })
-    .select('topics title _id createdAt')
+    .select('topics title _id createdAt seen downloaded')
     .skip(perPage * (req.params.pageId - 1))
     .limit(perPage)
     .sort({createdAt: -1})
@@ -92,6 +92,10 @@ router.route('/id/:id')
             return
         }
         res.json(article)
+        if(!res.locals.admin){
+            article.seen += 1
+            article.save()
+        }
     })
 })
 .put((req,res)=>{

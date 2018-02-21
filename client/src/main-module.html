@@ -15,6 +15,7 @@
 
 <link rel="import" href="../bower_components/polymer/lib/utils/debounce.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/async.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/custom-style.html">
 
 <link rel="lazy-import" href="articles/articles-module.html">
 
@@ -30,47 +31,47 @@
 <script src="math-tex/mathjax-loader.js"></script>
 <script src="math-tex/math-tex.js"></script>
 <script src="../bower_components/ajax/dist/ajax.min.js"></script>
-<script src="../bower_components/js-cookie/src/js.cookie.js"></script>
 
 <dom-module id="main-module">
     <template>
-        <style include="shared-styles">
-            :host {
-                --app-main-color: var(--paper-blue-600);
-                --app-header-color: #546e7a;
-                display: block;
-            }
+		<custom-style>
+			<style include="shared-styles">
+				:host {
+					--app-main-color: var(--paper-blue-600);
+					--app-header-color: #546e7a;
+					display: block;
+				}
 
-            app-toolbar{
-                height:40px;
-                color: var(--paper-grey-400);
-                font-size: 16px;
-            }
-            iron-sections{
-                height: calc(100vh - 122px)
-            }
-       
-            .title{
-				color: var(--app-main-color);
-                font-weight: 500;
-                cursor: pointer;
-                font-size: 20px;
-            }
-            .tabs{
-                margin-left: 64px;
-            }
-            .tabs * {
-                margin-left: 8px;
-            }
-            a.iron-selected{
-                border-bottom: 2px solid var(--paper-grey-600);
-				padding-bottom: 2px;
-				color: var(--paper-grey-600)
-            }
-			iron-pages{
-				height: calc(100vh - 82px)
-			}
-        </style>
+				app-toolbar{
+					height:40px;
+					background-color: var(--app-main-color);
+					font-size: 16px;
+					color: white
+				}
+				iron-sections{
+					height: calc(100vh - 122px)
+				}
+		
+				.title{
+					font-weight: 500;
+					cursor: pointer;
+					font-size: 20px;
+				}
+				.tabs{
+					margin-left: 64px;
+				}
+				.tabs * {
+					margin-left: 8px;
+				}
+				a.iron-selected{
+					border-bottom: 2px solid white;
+					padding-bottom: 2px;
+				}
+				iron-pages{
+					height: calc(100vh - 82px)
+				}
+			</style>
+		</custom-style>
         <app-location route="{{route}}"></app-location>
         <app-route
             route="{{route}}"

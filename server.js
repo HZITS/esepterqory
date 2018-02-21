@@ -5,7 +5,8 @@ const bodyParser = require('body-parser')
 const prpl = require('prpl-server')
 const subdomain = require('express-subdomain')
 const rendertron = require('rendertron-middleware')
-
+const useragent = require('express-useragent')
+ 
 // MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
 
@@ -13,18 +14,24 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
 var app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
+//For search bots 
 app.use(rendertron.makeMiddleware({
   proxyUrl: 'https://render-tron.appspot.com',
   injectShadyDom: true
-}));
+}))
+app.use(useragent.express())
 
 app.post('/api/topics', isAdmin)
 app.post('/api/problems', isAdmin)
 
-app.get((req,res,next) => {
+app.use((req,res,next) => {
 	res.set({
-		"Cache-Control": "no-cache"
+		"Cache-Control":  'no-cache, no-store, must-revalidate'
 	})
+	if(req.get('authorization') == 'Basic YWRtaW46YWRtaW5Sb290MTch'){
+		res.locals.admin = true
+	} 
 	next()
 })
 
@@ -39,6 +46,7 @@ app.get('/*', prpl.makeHandler('.', {
 }))
 
 function isAdmin(req,res,next) {
+
 	if(req.get('authorization') == 'Basic YWRtaW46YWRtaW5Sb290MTch'){
 		next()
 	} else {

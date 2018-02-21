@@ -22,6 +22,7 @@ const options = {
     },
 }
 
+//Download problem by id
 router.route('/problem/:id')
 .get((req, res) => {
     res.set({
@@ -34,42 +35,24 @@ router.route('/problem/:id')
             return
         }
 
-        const $ = cheerio.load(problem.problem)
-        const arr = $('editor-formula-module').toArray()
-
-        arr.forEach((el, index) => {
-            if($(el).attr('display') == "block")
-                $(el).after("$$" + $(el).attr('math') + "$$")
-            else 
-                $(el).after("$" + $(el).attr('math') + "$")
-
-            $(el).remove()
-        })
-
+        const $ = setMath(problem.problem)
         $.root().prepend(`<h3>${problem.number}</h3>`)
 
-        math($.html(), 
-            {
-                format: ["TeX"],
-                output: 'html',
-                singleDollars: true,
-            }, 
-            {
-                html: true
-            }, 
-            (html) => {
+        renderMath($.html(), html => {
+            res.set({
+                "Content-Disposition": `attachment; filename="${problem.number}.pdf"`
+            })
+            pdf.create(html, options).toStream(function(err, stream){
+                stream.pipe(res);
+            })
 
-                pdf.create(html, options).toStream(function(err, stream){
-                    res.set({
-                        "Content-Disposition": `attachment; filename="${problem.number}.pdf"`
-                    })
-                    stream.pipe(res);
-                });
+            problem.downloaded += 1
+            problem.save()
         })
-
     })
 })
 
+//Download article by id
 router.route('/article/:id')
 .get((req, res) => {
     
@@ -80,53 +63,33 @@ router.route('/article/:id')
             return
         }
 
-        const $ = cheerio.load(article.article)
-        const arr = $('editor-formula-module').toArray()
-
-        arr.forEach((el, index) => {
-            if($(el).attr('display') == "block")
-                $(el).after("$$" + $(el).attr('math') + "$$")
-            else 
-                $(el).after("$" + $(el).attr('math') + "$")
-
-            $(el).remove()
-        })
-
+        const $ = setMath(article.article)
         $.root().prepend(`<h3>${article.title}</h3>`)
 
-        math($.html(), 
-            {
-                format: ["TeX"],
-                output: 'html',
-                singleDollars: true,
-            }, 
-            {
-                html: true
-            }, 
-            (html) => {
-                res.set({
-                    "Content-Disposition": `attachment; filename="${article.title}.pdf"`
-                })
-                pdf.create(html, options).toStream(function(err, stream){
-                    stream.pipe(res);
-                });
+        renderMath($.html(), html => {
+            res.set({
+                "Content-Disposition": `attachment; filename="${article.title}.pdf"`
+            })
+            pdf.create(html, options).toStream(function(err, stream){
+                stream.pipe(res);
+            })
+            article.downloaded += 1
+            article.save()
         })
-
     })
 })
 
+//Download page of problems by topic and page number
 router.route('/topic/:id/:page')
 .get((req,res) => {
 
     const perPage = 10
 
-    Problem.find({
-        path: req.params.id
-    })
+    Problem.find()
     .select('problem number')
     .skip(perPage * (req.params.page - 1))
     .limit(perPage)
-    .sort({title: 1})
+    .sort({number: 1})
     .exec((err, problems) => {
         if(err) {
             res.json(err)
@@ -134,37 +97,55 @@ router.route('/topic/:id/:page')
         }
 
         const source = problems.map(el => {return `<h2>${el.number}</h2><p>` + el.problem}).join('</p>')
-        const $ = cheerio.load(source)
-        const arr = $('editor-formula-module').toArray()
-
-        arr.forEach((el, index) => {
-            if($(el).attr('display') == "block")
-                $(el).after("$$" + $(el).attr('math') + "$$")
-            else 
-                $(el).after("$" + $(el).attr('math') + "$")
-            $(el).remove()
+        const $ = setMath(source)
+        
+        renderMath($.html(), html => {
+            res.set({
+                "Content-Disposition": `attachment; filename="${req.params.id}.pdf"`
+            })
+            pdf.create(html, options).toStream(function(err, stream){
+                stream.pipe(res);
+            })
+            Problem.find()
+            .skip(perPage * (req.params.pageId - 1))
+            .limit(perPage)
+            .setOptions({ multi: true })
+            .update({ $inc: { downloaded: 1 } })
+            .exec()
         })
-
-
-       math($.html(), 
-           {
-               format: ["TeX"],
-               output: 'html',
-               singleDollars: true,
-           }, 
-           {
-               html: true
-           }, 
-           (html) => {
-               res.set({
-                   "Content-Disposition": `attachment; filename="${req.params.id}.pdf"`
-               })
-               pdf.create(html, options).toStream(function(err, stream){
-                   stream.pipe(res);
-               });
-       })
-
     })
 })
+
+//Setting math
+const setMath = (html) => {
+    const $ = cheerio.load(html)
+    const arr = $('editor-formula-module').toArray()
+
+    arr.forEach((el, index) => {
+        if($(el).attr('display') == "block")
+            $(el).after("$$" + $(el).attr('math') + "$$")
+        else 
+            $(el).after("$" + $(el).attr('math') + "$")
+        $(el).remove()
+    })
+    return $
+}
+
+//Rendering math
+const renderMath = (html, cb) => {
+    math(html, 
+        {
+            format: ["TeX"],
+            output: 'html',
+            singleDollars: true,
+        }, 
+        {
+            html: true
+        }, 
+        (res) => {
+            cb(res)
+    })
+}
+
 
 module.exports = router

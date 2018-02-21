@@ -10,6 +10,7 @@
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "express-subdomain": "^1.0.5",
+    "express-useragent": "^1.0.12",
     "fs": "0.0.1-security",
     "html-pdf": "^2.2.0",
     "mathjax-node": "^2.0.0",
