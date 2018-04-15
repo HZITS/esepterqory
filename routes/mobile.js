@@ -4,8 +4,7 @@ const prpl = require('prpl-server')
 
 router.use('/',prpl.makeHandler('.', {
 	builds: [
-		// {name: 'admin/build/es6', browserCapabilities: ['es2015', 'push']},
-		{name: 'mobile'}
+		{name: process.env.MONGODB_URI ? 'mobile/build/es5': 'mobile'}
 	]
 }))
 

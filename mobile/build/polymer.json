@@ -2,23 +2,17 @@
   "entrypoint": "index.html",
   "shell": "src/main-module.html",
   "fragments": [
-    "src/topics/topics-module.html",
-    "src/sources/sources-module.html",
+    "src/modules/problems-module.html",
     "src/articles/articles-module.html",
-    "src/about/about-module.html",
-    "src/authors/authors-module.html",
-    "src/feedback/feedback-module.html"
+    "src/home/home-module.html"
   ],
   "sources": [
     "src/**/*",
     "index.html",
     "src/main-module.html",
-    "src/topics/topics-module.html",
-    "src/sources/sources-module.html",
+    "src/modules/problems-module.html",
     "src/articles/articles-module.html",
-    "src/about/about-module.html",
-    "src/authors/authors-module.html",
-    "src/feedback/feedback-module.html"
+    "src/home/home-module.html"
   ],
   "extraDependencies": [
     "bower_components/webcomponentsjs/*.js",
