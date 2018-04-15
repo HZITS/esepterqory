@@ -1,0 +1,255 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../bower_components/iron-overlay-behavior/iron-overlay-behavior.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+
+<link rel="import" href="../bower_components/polymer/lib/utils/debounce.html">
+<link rel="import" href="../bower_components/polymer/lib/utils/async.html">
+<link rel="import" href="../bower_components/polymer/lib/elements/custom-style.html">
+
+<link rel="import" href="modules/section-module.html">
+<link rel="import" href="modules/editor-formula-module.html">
+<link rel="import" href="modules/path-module.html">
+<link rel="import" href="modules/topics-tree-module.html">
+<link rel="import" href="modules/shared-styles.html">
+<link rel="import" href="modules/redux-store.html">
+
+<script src="math-tex/mathjax-loader.js"></script>
+<script src="math-tex/math-tex.js"></script>
+<script src="../bower_components/ajax/dist/ajax.min.js"></script>
+
+<dom-module id="main-module">
+    <template>
+		<custom-style>
+			<style include="shared-styles">
+				:host {
+					--app-main-color: var(--paper-blue-600);
+					--app-header-color: #546e7a;
+					display: block;
+				}
+
+				app-toolbar{
+					height:40px;
+					background-color: var(--app-main-color);
+					font-size: 16px;
+					color: white
+				}
+			
+				.title{
+					font-weight: 500;
+					cursor: pointer;
+					font-size: 20px;
+				}
+
+				iron-selector a {
+					color: white;
+					padding: 8px
+				}
+				a.iron-selected{
+					background-color: var(--paper-blue-400)
+				}
+				#drawer{
+					--app-drawer-width: 80vw;
+				}
+				.menu {
+					background-color: var(--app-main-color)
+				}
+				topics-tree-module{
+					width: 80vw;
+					height: calc(100vh - 180px)
+				}
+				.path{
+					width: 80vw;
+					overflow: auto
+				}
+			</style>
+		</custom-style>
+        <app-location route="{{route}}"></app-location>
+        <app-route
+            route="{{route}}"
+            pattern="/:section"
+            data="{{routeData}}"
+            tail="{{subroute}}">
+        </app-route>
+        <app-route
+            route="{{subroute}}"
+            pattern="/:topicId"
+            data="{{subrouteData}}"
+            tail="{{subsubroute}}">
+        </app-route>
+        <app-route
+            route="{{subsubroute}}"
+            pattern="/:page"
+            data="{{subsubrouteData}}"
+        >
+        </app-route>
+		<app-toolbar>
+			<iron-icon icon="icons:menu" on-tap="openDrawer"></iron-icon>
+			<div main-title> EsepterQory</div>
+		</app-toolbar>
+		<iron-pages attr-for-selected="name" selected="[[section]]">
+			<problems-module name="topics"></problems-module>
+			<problems-module name="sources"></problems-module>
+			<articles-module name="articles"></articles-module>
+			<home-module name="home"></home-module>
+		</iron-pages>
+		<app-drawer slot="drawer" id="drawer">
+			<div class="menu">
+				<iron-selector class="layout vertical" selected="[[section]]" attr-for-selected="name">
+					<a href="/home" name="home">Home</a>
+					<a href="/articles/articles/1" name="articles">Теория</a>
+					<a href="/topics/topics/1" name="topics">Тақырыптар</a>
+					<a href="/sources/sources/1" name="sources">Дереккөздер</a>
+				</iron-selector>
+				<div class="path">
+					<path-module class="head"></path-module>
+				</div>
+				<topics-tree-module></topics-tree-module>
+			</div>
+		</app-drawer>
+    </template>
+    <script>
+		class MainModule extends ReduxMixin(Polymer.Element) {
+			static get is() { return 'main-module'; }
+
+			static get properties() {
+				return {
+					section: {
+						type: String,
+						observer: 'sectionChanged',
+					},
+					page: {
+						type: Number,
+						observer: 'pageChanged',
+					},
+					topicId: String,
+					routeData: Object,
+					subrouteData: Object,
+					subsubrouteData: Object
+				}
+			}
+
+			static get observers() {
+				return [
+					'routeSectionChanged(routeData.section)',
+					'routeTopicIdChanged(subrouteData.topicId)',
+					'routePageChanged(subsubrouteData.page)',
+					'topicIdChanged(topicId, section)'
+				]
+			}
+
+			openDrawer(){
+				this.$.drawer.open()
+			}
+
+			routeSectionChanged(section) {
+				this.sectionDebouncer = Polymer.Debouncer.debounce(
+				this.sectionDebouncer,
+				Polymer.Async.timeOut.after(100),
+				_ => {
+					this.section = section || 'topics'
+				})
+			}
+
+			routeTopicIdChanged(topicId) {
+				this.topicIdDebouncer = Polymer.Debouncer.debounce(
+				this.topicIdDebouncer,
+				Polymer.Async.timeOut.after(100),
+				_ => {
+					this.topicId = topicId || 'topics'
+				})
+			}
+
+			topicIdChanged(topicId, section){
+
+				if(!topicId) return
+				if(!section) return
+				if(section == 'home'){
+					this.dispatch({
+						type: 'path',
+						value: []
+					})
+					return
+				}
+
+				ajax().get("/api/topics/" + topicId, { populate: true})
+				.then( topic => {
+
+					if(topic == null) {
+						return
+					}
+
+					this.dispatch({
+						type: 'path',
+						value: topic.topicsPath.map(el => {
+							return {
+								_id: el._id,
+								title: el.title,
+								link: `/${this.section}/${el._id}/1`
+							}
+						})
+					})
+
+					this.dispatch({
+						type: 'topic',
+						value: topic
+					})
+				})
+			}
+
+			routePageChanged(page) {
+				this.page = page || 1
+			}
+
+			pageChanged(page){
+				this.pageDebouncer = Polymer.Debouncer.debounce(
+				this.pageDebouncer,
+				Polymer.Async.timeOut.after(100),
+				_ => {
+					
+					this.dispatch({
+						type: 'page',
+						value: page 
+					})
+				})
+			}
+
+			sectionChanged(section) {
+
+				this.dispatch({
+					type: 'section',
+					value: section
+				})
+
+				var resolvedsectionUrl
+
+				if (section == 'topics' || section == 'sources') {
+					resolvedsectionUrl = this.resolveUrl('modules/problems-module.html')
+				} else if (section == 'articles') {
+					resolvedsectionUrl = this.resolveUrl('articles/articles-module.html')
+				} else if (section == 'home') {
+					resolvedsectionUrl = this.resolveUrl('home/home-module.html')
+				}
+
+				Polymer.importHref(
+					resolvedsectionUrl,
+					null,
+					null,
+					true)  
+			}
+		}
+
+    	window.customElements.define(MainModule.is, MainModule);
+    </script>
+</dom-module>

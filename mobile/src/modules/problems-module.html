@@ -1,0 +1,107 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="problems-cell-module.html">
+<link rel="import" href="problem-module.html">
+<link rel="import" href="redux-store.html">
+<link rel="import" href="pages-module.html">
+
+<dom-module id="problems-module">
+    <template>
+        <style include="shared-styles">
+            section-module{
+                width: 100vw;
+                height: calc(100vh - 40px)
+            }
+        </style>
+        <section-module
+            show-title
+            title="[[problem.title]]"
+            max="37"
+        >   
+            <div slot="actions" class="layout horizontal">
+                <a target="_blank" href$="/api/download/topic/[[topic._id]]/[[page]]">
+                    <iron-icon icon="icons:file-download"></iron-icon>
+                </a>
+            </div>
+            <iron-list slot="list" id="problems" items="[[problems]]">
+                <template>
+                    <problems-cell-module problem="[[item]]"></problems-cell-module>
+                </template>
+            </iron-list> 
+            <pages-module slot="footer" topic="[[topic]]" name="[[name]]"></pages-module>
+        </section-module>   
+    </template>
+    <script>
+        class ProblemsModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'problems-module' }
+
+            static get properties() {
+                return {
+                    name: String,
+                    topic: {
+                        type: Object,
+                        statePath: 'topic'
+                    },
+                    page: {
+                        type: Number,
+                        statePath: 'page'
+                    },
+                    section: {
+                        type: String,
+                        statePath: 'section'
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                    'getProblems(topic, page, name, section)'
+                ];
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+
+                dispatcher.subscribe('math-rendered',_ => {
+                    this.$.problems.notifyResize()
+                })
+            }
+
+            getProblems(topic, p, name, section){
+                
+                if(!topic) return
+                if(!topic.path) return
+                if(!p) return
+
+                if (name != section) return 
+
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+                    if(topic.path.split('/').length > 1){
+                        this.problem = {
+                            title: topic.title + " есептері",
+                        } 
+                    } else {
+                        this.problem = null
+                    }
+
+                    ajax().get("/api/problems/topic/" + topic._id + "/" + p)
+                    .then( res => {
+                        this.problems = res
+                    })                    
+                })
+            }
+
+            currentProblemChanged(problem){
+                this.dispatch({
+                    type: 'currentProblem',
+                    value:problem
+                })
+            }
+
+        }
+        customElements.define(ProblemsModule.is, ProblemsModule);
+    </script>

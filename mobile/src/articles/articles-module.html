@@ -1,0 +1,112 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../modules/topics-tree-module.html">
+<link rel="import" href="../modules/pages-module.html">
+<link rel="import" href="article-module.html">
+<link rel="import" href="articles-cell-module.html">
+<link rel="import" href="../modules/redux-store.html">
+
+
+<dom-module id="articles-module">
+    <template>
+        <style include="shared-styles">
+            section-module{
+                width: 100vw;
+                height: calc(100vh - 40px)
+            }
+        </style>
+        <section-module
+            title="[[article.title]]"
+            max="37"
+        >   
+            <iron-list slot="list" id="articles" items="[[articles]]">
+                <template>
+                    <articles-cell-module selected="[[selected]]" article="[[item]]"></articles-cell-module>
+                </template>
+            </iron-list> 
+            <pages-module slot="footer" topic="[[topic]]" title="articles"></pages-module>
+        </section-module>   
+        <article-module id="articleModule"></article-module>
+    </template>
+    <script>
+        class ArticlesModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'articles-module' }
+
+            static get properties() {
+                return {
+                    article: Object,
+                    topic: {
+                        type: Object,
+                        statePath: 'topic'
+                    },
+                    page: {
+                        type: Number,
+                        statePath: 'page',
+                    },
+                    section: {
+                        type: Number,
+                        statePath: 'section'
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                    'getArticles(topic, page, section)'
+                ];
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+
+                this.addEventListener('show-article', e => {
+
+                    this.$.articleModule.open()
+                    
+                    this.dispatch({
+                        type: 'currentArticleId',
+                        value: e.detail._id
+                    })
+                })
+            }
+            
+            getArticles(topic, p, section){
+
+                if(!topic) return
+                if(!topic.path) return
+                if(!p) return 
+
+                if (section != 'articles') return
+
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+
+                    if(topic.path.split('/').length > 1){
+                        this.article = {
+                            title: "Теориялық материалдар"
+                        } 
+                    } else {
+                        this.article = null
+                    }
+
+                    ajax().get("/api/articles/topic/" + topic._id + "/" + p)
+                    .then( res => {
+                        this.articles = res
+                    })
+                })
+            }
+
+            currentArticleChanged(article){
+                this.dispatch({
+                    type: 'currentArticle',
+                    value:article
+                })
+            }
+
+        }
+        customElements.define(ArticlesModule.is, ArticlesModule);
+    </script>
+</dom-module>

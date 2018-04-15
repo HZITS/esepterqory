@@ -1,0 +1,93 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="articles-cell-module">
+    <template>
+        <style include="shared-styles">
+            :host{
+                padding: 8px 16px;
+                border-bottom: 1px solid var(--paper-grey-300);
+            }
+            iron-icon{
+                color: var(--paper-grey-600)
+            }
+            #des{
+                padding: 8px 0px;
+            }
+            #des:focus{
+                outline: none
+            }
+            .topic{
+                background-color: var(--paper-grey-100);
+                border-radius: 4px;
+                padding: 2px 4px;
+                color: var(--paper-grey-500);
+                font-size: 12px;
+            }
+            .title{
+                font-weight: 500
+            }
+           .seen{
+               font-size: 14px;
+               color: var(--paper-grey-500);
+               line-height: 24px;
+               height: 24px;
+               background-color: var(--paper-grey-200);
+               margin-top: 8px;
+               border-radius: 4px;
+               padding: 4px;
+               cursor: pointer
+           }
+           .seen iron-icon{
+               color: var(--paper-grey-400);
+               width: 16px;
+               margin: 0px 4px;
+           }
+            .dl{
+                font-size: 12px;
+                color: var(--paper-grey-500)
+            }
+        </style>
+        <div class="wrapper">
+            <div class="head layout horizontal justified">
+                <div class="title">[[article.title]]</div>
+                <a class="dl" target="_blank" href$="/api/download/article/[[article._id]]">
+                    [[article.downloaded]]<iron-icon icon="icons:file-download"></iron-icon>
+                </a>
+            </div>
+          
+            <div id="des"></div>
+            <template is="dom-repeat" items="[[article.topics]]">
+                <a class="topic" href$="/articles/[[item._id]]">[[item.title]]</a>
+            </template>
+            <div class="seen layout horizontal justified" on-tap="showArticle">
+                <span>Көру</span>
+                <span>[[article.seen]]<iron-icon icon="icons:visibility"></iron-icon></span>
+            </div>
+        </div>
+    </template>
+    <script>
+        class ArticlesCellModule extends Polymer.Element {
+
+            static get is() { return 'articles-cell-module' }
+
+            static get properties() {
+                return {
+                    article: Object
+                }
+            }
+
+            showArticle(){
+                this.dispatchEvent(new CustomEvent(
+                    'show-article',{
+                        detail: {
+                            _id: this.article._id
+                        }, 
+                        bubbles: true,
+                        composed: true
+                        }))
+            }
+
+        }
+        customElements.define(ArticlesCellModule.is, ArticlesCellModule);
+    </script>
+</dom-module>

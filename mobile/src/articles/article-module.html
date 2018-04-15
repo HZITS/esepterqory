@@ -1,0 +1,75 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../modules/redux-store.html">
+<link rel="import" href="../../bower_components/isw-dialog/isw-dialog.html"> 
+
+<dom-module id="article-module">
+    <template>
+        <style include="shared-styles">
+            
+            :host{
+                display: flex;
+                flex-direction: column;
+            }
+
+            .head{
+                flex: 0 0 40px;
+                line-height: 40px;
+                padding: 0px 16px;
+                color:var(--paper-grey-600);
+                border-bottom: 1px solid var(--paper-grey-300);
+                background-color: var(--paper-grey-100);
+            }
+
+            .body{
+                flex: 1 1 auto;
+                overflow: auto;
+                padding: 16px;
+            }
+
+            #dialog{
+                width: 100vw;
+                height: 80vh;
+                margin: 0;
+                overflow: auto;
+                padding: 8px 16px;
+            }
+        </style>
+        <isw-dialog id="dialog" with-backdrop>
+            <h2 class="title">[[article.title]]</h2>
+            <div id="article"></div>
+        </isw-dialog>
+    </template>
+    <script>
+        class DashboardarticleModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'article-module' }
+
+            static get properties() {
+                return {
+                    currentArticleId: {
+                        type: Object,
+                        statePath: 'currentArticleId',
+                        observer: 'currentArticleIdChanged'
+                    },
+                    article: Object
+                }
+            }
+            
+            currentArticleIdChanged(id){
+                if(!id) return
+
+                ajax().get("/api/articles/id/" + id)
+                .then( res => {
+                    this.article = res
+                    this.shadowRoot.querySelector("#article").innerHTML = res.article
+                })
+            }
+
+            open(){
+                this.$.dialog.open()
+            }
+        }
+        customElements.define(DashboardarticleModule.is, DashboardarticleModule);
+    </script>
+</dom-module>

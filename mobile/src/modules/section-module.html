@@ -1,0 +1,89 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="section-module">
+    <template>
+        <style include="shared-styles">
+
+            :host{
+                background-color: white;
+                display: flex;
+                flex-flow: column;
+            }
+
+            .head{
+                color: var(--paper-grey-600);
+                height: 40px;
+                line-height: 40px;
+                padding: 0px 16px;
+                background-color: var(--paper-grey-100);
+                border-bottom: 1px solid var(--paper-grey-300);
+                flex: 0 0 40px;
+            }
+
+            .list{
+                flex: 1 1 auto;   
+                overflow: auto        
+            }
+            .footer{
+                flex: 0 0 auto;           
+                max-height: 40px
+            }
+            a:hover{
+                color: black;
+                cursor: pointer
+            }
+
+        </style>
+        <div class="head layout horizontal center justified">
+            <div class="title">[[setTitle(title)]]</div>
+            <div class="actions"> 
+                <slot name="actions"></slot>
+            </div>
+        </div>  
+        <template is="dom-if" if="[[buttonTitle]]">
+            <div class="addButton layout horizontal center" on-click="addButtonTapped">
+                <iron-icon icon="icons:add"></iron-icon>
+                <div>[[buttonTitle]]</div>
+            </div>
+        </template>
+        <div class="list" id="list">
+            <slot name="list"></slot>
+        </div>
+        <div class="footer" id="footer">
+            <slot name="footer"></slot>
+        </div>
+    </template>
+    <script>
+        class SectionModule extends Polymer.Element {
+
+            static get is() { return 'section-module' }
+
+            static get properties() {
+                return {
+                    title: String,
+                    titleLink: String,
+                    link: String,
+                    buttonTitle: String,
+                    event: String,
+                    showTitle: Boolean,
+                    max: Number
+                }
+            }
+
+            setTitle(title){
+                if(!title) return
+                if(title.length < (this.max || 25)) {
+                    return title
+                } else {
+                    return title.substring(0, (this.max || 25)) + '...'
+                }
+            }
+        
+            addButtonTapped(){
+                this.dispatchEvent(new CustomEvent(this.event, {bubbles: true, composed: true}))
+            }
+
+        }
+        customElements.define(SectionModule.is, SectionModule);
+    </script>
+</dom-module>

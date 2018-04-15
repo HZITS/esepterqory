@@ -1,0 +1,77 @@
+<link rel="import" href="../modules/section-module.html">
+<link rel="import" href="../modules/problems-cell-module.html">
+<link rel="import" href="../modules/dashboard-module.html">
+<dom-module id="home-module">
+    <template>
+        <style include="shared-styles">
+            .info{
+                height: calc(100vh - 72px);
+                overflow: auto;
+                padding: 16px;
+                width: calc(100vw - 32px);
+            }
+            img{
+                 border-top: 1px solid var(--paper-grey-300);
+                 width: calc(100vw - 32px);
+                 padding-top: 16px;
+            }
+            .img .des{
+                padding: 8px 0px;
+            }
+        </style>
+        <div class="info">
+            <p>Ас салаумағалейкум, құрметті esepterqory.kz интернет порталының қолданушылары!</p>
+            <p>Жобаның басты мақсаты - ол елімізде қазақ тіліндегі сапалы ақпараттың аясын кеңейту, дәлірек айтсақ, жаратылыстану бағытындағы: математика, физика, информатика, химия және биология пәндері бойынша есептер қорын бір жерге жүйелеп жинақтау. Қазақ тілінде өтететін пәндердің деңгейін көтеру, сабақ беретін ұстаздардың жұмысын ыңғайландыру және ынтымақтастығын дамытып, бірлесе жұмыс жасауларына ықпал ету. </p>
+            <p>Есептер қоры интернет порталы негізгі үш блоктан тұрады: теория, тақырыптар және дереккөздер.  Кімде кімнің ұсыныстары, ескертулері болса немесе өзінің авторлық есептері болса әрқашан қарастырып, осы порталға жариялауға әрқашан дайынбыз! </p>
+            <p>Портал кез-келген қолданушыға қол жетімді!!!</p>
+            <div class="img">
+                <img src="https://i.imgur.com/kLfqPlD.jpg">
+                <div class="des">
+                    Жобаның авторы және демеушісі – Пак Олег Владимирұлы. Алматы 
+                    қаласы физика-математика бағытындағы Назарбаев зияткерлік мектебінің директоры.
+                </div>
+            </div>
+            <div class="img">
+                <img src="https://i.imgur.com/WDhsyLq.jpg">
+                <div class="des">
+                    Жобаның авторы және бас модератор – Ардақұлы  Дархан. Алматы қаласы физика-математика бағытындағы Назарбаев зияткерлік мектебінің математика пәнінің мұғалімі. 
+                </div>
+            </div>
+            <p>Кері байланыс</p>
+            <p>Ұялы байланыс: 8 701 624 0999</p>
+            <p>Электронды жәшік: esepterqory@gmail.com </p>
+        </div>
+    </template>
+    <script>
+        class HomeModule extends Polymer.Element {
+
+            static get is() { return 'home-module' }
+
+            static get properties() {
+                return {
+                }
+            }
+
+            static get observers() {
+                return [
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+
+                dispatcher.subscribe('math-rendered',_ => {
+                    this.$.problems.notifyResize()
+                })
+
+                ajax().get("/api/problems")
+                .then( res => {
+                    this.problems = res
+                })   
+
+            }
+
+        }
+        customElements.define(HomeModule.is, HomeModule);
+    </script>
+</dom-module>

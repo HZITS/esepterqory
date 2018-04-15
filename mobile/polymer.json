@@ -1,0 +1,28 @@
+{ 
+  "name": "EsepterQory",
+  "entrypoint": "index.html",
+  "shell": "src/main-module.html",
+  "fragments": [
+    "src/topics/topics-module.html",
+    "src/sources/sources-module.html",
+    "src/articles/articles-module.html",
+    "src/about/about-module.html",
+    "src/authors/authors-module.html",
+    "src/feedback/feedback-module.html"
+  ],
+  "extraDependencies": [
+    "bower_components/webcomponentsjs/*.js"
+  ],
+  "lint": {
+    "rules": ["polymer-2"]
+  },
+  "builds": [
+    {
+      "name": "es5",
+      "js": {"minify": true, "compile": true},
+      "css": {"minify": true},
+      "html": {"minify": true},
+      "bundle": true
+    }
+  ]
+}
