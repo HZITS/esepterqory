@@ -40,7 +40,9 @@ app.use((req, res, next) => {
 
 	if(req.useragent.isMobile && req.subdomains[0] != 'm') {
 
-		res.redirect(req.protocol + '://m.' + req.get('host') + req.originalUrl)
+		const URL = process.env.MONGODB_URI ? req.protocol + '://m.esepterqory.kz:3000' + req.originalUrl: req.protocol + '://m.example.com' + req.originalUrl 
+
+		res.redirect(URL)
 	} else {
 		next()
 	}
