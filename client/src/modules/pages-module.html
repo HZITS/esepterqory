@@ -43,13 +43,14 @@
             static get properties() {
                 return {
                    title: String,
-                   topic: Object,
+                   topic: {
+                       type: Object,
+                       statePath: 'topic'
+                   },
                    pages: Array,
                    page: {
                        type: Number,
-                       statePath(state){
-                           return state[this.title + 'Page']
-                       }
+                       statePath: 'page'
                    },
                    currentPage: Number,
                    section: {

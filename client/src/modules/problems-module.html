@@ -7,6 +7,9 @@
 <dom-module id="problems-module">
     <template>
         <style include="shared-styles">
+            iron-list{
+                z-index:10
+            }
         </style>
         <section-module
             show-title
@@ -19,7 +22,7 @@
                     <iron-icon icon="icons:file-download"></iron-icon>
                 </a>
             </div>
-            <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{currentProblem}}">
+            <iron-list slot="list" id="problems" items="[[problems]]">
                 <template>
                     <problems-cell-module selected="[[selected]]" problem="[[item]]"></problems-cell-module>
                 </template>
@@ -34,18 +37,18 @@
 
             static get properties() {
                 return {
-                    title: String,
+                    name: String,
                     topic: {
                         type: Object,
-                        statePath(state) {
-                            return state[this.title + 'Topic']
-                        }
+                        statePath: 'topic'
                     },
                     page: {
                         type: Number,
-                        statePath(state) {
-                            return state[this.title + 'Page']
-                        }
+                        statePath: 'page'
+                    },
+                    section: {
+                        type: String,
+                        statePath: 'section'
                     },
                     currentProblem: {
                         type: Object,
@@ -56,7 +59,7 @@
 
             static get observers() {
                 return [
-                    'getProblems(topic, page)'
+                    'getProblems(topic, page, name, section)'
                 ];
             }
 
@@ -67,23 +70,14 @@
                     this.$.problems.notifyResize()
                 })
 
-                this.addEventListener('edit-problem',e => {
-                    this.$.problemDialog.open()
-                    this.editProblem = e.detail.problem
-                })
-                this.addEventListener('add-problem',e => {
-                    this.$.problemDialog.open()
-                })
-                dispatcher.subscribe('reload-problems', _ => {
-                    this.getProblems(this.topic, 1, this.title, this.section)
-                })
             }
 
-            getProblems(topic, p){
-                
+            getProblems(topic, p, name, section){
+
                 if(!topic) return
                 if(!topic.path) return
                 if(!p) return
+                if(name != section) return
 
                 this.pageDebouncer = Polymer.Debouncer.debounce(
                 this.pageDebouncer,
@@ -103,13 +97,6 @@
                     })                    
                 })
 
-            }
-
-            currentProblemChanged(problem){
-                this.dispatch({
-                    type: 'currentProblem',
-                    value:problem
-                })
             }
 
         }

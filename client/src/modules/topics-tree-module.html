@@ -35,9 +35,9 @@
             style="width:300px"
         >  
             <ul class="list" slot="list">
-                <template is="dom-repeat" items="[[setSubtopics(topic.subtopics)]]">
-                    <a class="listItem layout horizontal" href$="/[[section]]/[[item._id]]">
-                        <li>[[item.title]]([[item.problemsCount]])</li>
+                <template is="dom-repeat" items="[[topic.subtopics]]">
+                    <a class="listItem layout horizontal" href$="/[[section]]/[[item._id]]/1">
+                        <li>[[item.title]]</li>
                     </a>
                 </template>
             </ul>
@@ -57,59 +57,10 @@
                     },
                     topic: {
                         type: Object,
-                        statePath(state) {
-                            return state[this.title + 'Topic']
-                        }
+                        statePath: 'topic'
                     }
                 }
             }
-
-            connectedCallback(){
-                super.connectedCallback()
-
-                this.addEventListener('add-topic',e => {
-                    this.topicToEdit = null
-                    this.$.topicDialog.open()
-                })
-                dispatcher.subscribe('reload-topics', _ => {
-
-                    ajax().get("/api/topics/" + this.topic._id, { populate: true})
-                    .then( res => {
-                        if(res == "doesn't exist") {
-                            return
-                        }
-
-                        var topic = res
-                        if (!(topic.subtopics instanceof Array)){
-                            topic.subtopics = [topic.subtopics]
-                        }
-
-                        this.dispatch({
-                            type: this.title + 'Topic',
-                            value: topic
-                        })
-                    })
-                }) 
-            }
-
-            setSubtopics(st){
-                if(st[0] === null) return []
-                return st
-            }
-
-            delete(){
-                ajax().delete("/api/topics/" + this.topic._id)
-                .then( res => {
-                    dispatcher.dispatch('reload-topics')
-                })
-            }
-
-            editTopic(){
-                console.log(this.topic)
-                this.topicToEdit = this.topic
-                this.$.topicDialog.open()
-            }
-
         }
         customElements.define(TopicsTreeModule.is, TopicsTreeModule);
     </script>

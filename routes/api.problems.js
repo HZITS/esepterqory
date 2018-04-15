@@ -4,8 +4,9 @@ const router = express.Router()
 const sid = require('shortid-36')
 const Problem = require('../models/problem');
 const Topic = require('../models/topic');
-const math = require('mathjax-node-page/lib/main').mjpage
+const math = require('./math')
 const cheerio = require('cheerio')
+const moment = require('moment')
 
 router.route('/')
 .post((req, res) => {
@@ -52,10 +53,23 @@ router.route('/')
     Problem.
     find()
     .limit(10)
+    .populate({
+        path: 'topics',
+        model: 'Topic',
+        select: '_id title'
+    })
+    .select('problem topics path number _id seen downloaded createdAt')
     .sort({createdAt: -1})
     .exec((err, problems) =>{
         if (err) res.json(err)
-        res.json(problems);
+        const result = problems.map(el => {
+            var problem = el.toObject()
+            problem.createdAt = moment(problem.createdAt).format('DD.MM.YYYY')
+
+            return problem
+        })
+
+        res.json(result)
     });
 })
 
@@ -72,22 +86,42 @@ router.route('/topic/:topicId/:pageId')
         model: 'Topic',
         select: '_id title'
     })
-    .select('problem topics number _id seen downloaded')
+    .select('problem topics path number _id seen downloaded createdAt')
     .skip(perPage * (req.params.pageId - 1))
     .limit(perPage)
     .sort({number: 1})
     .exec((err, problems) => {
+        
         if(err) {
             res.json(err)
             return
         }
-        res.json(problems)
+
+        const result = problems.map(el => {
+            var problem = el.toObject()
+            problem.createdAt = moment(problem.createdAt).format('DD.MM.YYYY')
+            
+            return problem
+        })
+
+        res.json(result)
+        
+        // const source = problems.map(el => {return el.problem}).join('____')
+        // const $ = math.set(source)
+
+        // math.render($.html(), output => {
+
+        //     output.split('____').forEach((el,index) => {
+        //         problems[index].problem = el
+        //     })
+
+        //     res.json(problems)
+        // })
     })
 })
 
 router.route('/id/:id')
 .get((req,res) => {
-    console.log(res.locals.admin)
 
     Problem.findById(req.params.id)
     .populate({
@@ -96,11 +130,14 @@ router.route('/id/:id')
         select: '_id title'
     })
     .exec((err, problem) => {
-        if(err) {
+        
+        if(err || !problem) {
             res.json(err)
             return
         }
+
         res.json(problem)
+        
         if(!res.locals.admin){
             problem.seen += 1
             problem.save()

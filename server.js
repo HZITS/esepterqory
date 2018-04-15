@@ -14,13 +14,14 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
 var app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.use(useragent.express())
 
 //For search bots 
 app.use(rendertron.makeMiddleware({
   proxyUrl: 'https://render-tron.appspot.com',
   injectShadyDom: true
 }))
-app.use(useragent.express())
+
 
 app.post('/api/topics', isAdmin)
 app.post('/api/problems', isAdmin)
@@ -35,12 +36,23 @@ app.use((req,res,next) => {
 	next()
 })
 
+app.use((req, res, next) => {
+
+	if(req.useragent.isMobile && req.subdomains[0] != 'm') {
+
+		res.redirect(req.protocol + '://m.' + req.get('host') + req.originalUrl)
+	} else {
+		next()
+	}
+})
+
 app.use('/api', require('./routes/api'))
+app.use(subdomain('m', require('./routes/mobile')))
 app.use(subdomain('admin', require('./routes/admin')))
+
 
 app.get('/*', prpl.makeHandler('.', {
 	builds: [
-		// {name: 'client/build/es6', browserCapabilities: ['es2015', 'push']},
 		{name: process.env.MONGODB_URI ? 'client/build/es5': 'client'}
 	]
 }))

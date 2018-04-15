@@ -9,18 +9,11 @@
 <link rel="import" href="../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 
-<link rel="import" href="../bower_components/paper-input/paper-input.html">
-
-<link rel="import" href="../bower_components/isw-dialog/isw-dialog.html"> 
-
 <link rel="import" href="../bower_components/polymer/lib/utils/debounce.html">
 <link rel="import" href="../bower_components/polymer/lib/utils/async.html">
 <link rel="import" href="../bower_components/polymer/lib/elements/custom-style.html">
 
-<link rel="lazy-import" href="articles/articles-module.html">
-
-<link rel="lazy-import" href="topics/topics-module.html">
-<link rel="lazy-import" href="sources/sources-module.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
 
 <link rel="import" href="modules/path-module.html">
 <link rel="import" href="modules/section-module.html">
@@ -62,10 +55,11 @@
 				}
 				.tabs * {
 					margin-left: 8px;
+					padding: 4px 8px
 				}
 				a.iron-selected{
-					border-bottom: 2px solid white;
-					padding-bottom: 2px;
+					border-radius: 4px;
+					background-color: var(--paper-blue-400)
 				}
 				iron-pages{
 					height: calc(100vh - 82px)
@@ -94,9 +88,9 @@
         <app-toolbar>
             <a href="/" class="title">EsepterQory.kz</a>
             <iron-selector class="tabs" selected="[[section]]" attr-for-selected="name">
-                <a href="/articles/articles" name="articles">Теория</a>
-                <a href="/topics/topics" name="topics">Тақырыптар</a>
-                <a href="/sources/sources" name="sources">Дереккөздер</a>
+                <a href="/articles/articles/1" name="articles">Теория</a>
+                <a href="/topics/topics/1" name="topics">Тақырыптар</a>
+                <a href="/sources/sources/1" name="sources">Дереккөздер</a>
             </iron-selector>
         </app-toolbar>
         <path-module class="head"></path-module>
@@ -121,6 +115,10 @@
 						type: String,
 						observer: 'sectionChanged',
 					},
+					page: {
+						type: Number,
+						observer: 'pageChanged',
+					},
 					topicId: String,
 					routeData: Object,
 					subrouteData: Object,
@@ -133,8 +131,7 @@
 					'routeSectionChanged(routeData.section)',
 					'routeTopicIdChanged(subrouteData.topicId)',
 					'routePageChanged(subsubrouteData.page)',
-					'topicIdChanged(topicId, section)',
-					'pageChanged(page, section)',
+					'topicIdChanged(topicId, section)'
 				]
 			}
 
@@ -168,17 +165,11 @@
 					return
 				}
 
-				console.log(topicId)
 				ajax().get("/api/topics/" + topicId, { populate: true})
-				.then( res => {
+				.then( topic => {
 
-					if(res == "doesn't exist") {
+					if(topic == "doesn't exist") {
 						return
-					}
-
-					var topic = res
-					if (!(topic.subtopics instanceof Array)){
-						topic.subtopics = [topic.subtopics]
 					}
 
 					this.dispatch({
@@ -193,7 +184,7 @@
 					})
 
 					this.dispatch({
-						type: this.section + 'Topic',
+						type: 'topic',
 						value: topic
 					})
 				})
@@ -203,15 +194,15 @@
 				this.page = page
 			}
 
-			pageChanged(page, section){
-				if(!section) return
+			pageChanged(page){
+
 				this.pageDebouncer = Polymer.Debouncer.debounce(
 				this.pageDebouncer,
 				Polymer.Async.timeOut.after(100),
 				_ => {
-					console.log('page ',page)
+
 					this.dispatch({
-						type: this.section + 'Page',
+						type: 'page',
 						value: page || '1'
 					})
 				})
@@ -224,7 +215,6 @@
 					type: 'section',
 					value: section || 'home'
 				})
-				console.log(section)
 
 				var resolvedsectionUrl = this.resolveUrl(section + '/' + section + '-module.html')
 

@@ -53,9 +53,22 @@ router.route('/:id')
         })
         .exec((err, topic) => {
             if(err || !topic) {
-                res.json("doesn't exist")
+                res.json(null)
                 return
             }
+
+            topic = topic.toObject()
+            if (!(topic.subtopics instanceof Array)){
+
+                if( topic.subtopics != null ){
+
+                    topic.subtopics = [topic.subtopics]
+                } else {
+
+                    topic.subtopics = []
+                }
+            }
+
             res.json(topic)
         })
 
