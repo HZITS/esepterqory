@@ -56,21 +56,6 @@
                 return [
                 ]
             }
-
-            connectedCallback(){
-                super.connectedCallback()
-
-                dispatcher.subscribe('math-rendered',_ => {
-                    this.$.problems.notifyResize()
-                })
-
-                ajax().get("/api/problems")
-                .then( res => {
-                    this.problems = res
-                })   
-
-            }
-
         }
         customElements.define(HomeModule.is, HomeModule);
     </script>

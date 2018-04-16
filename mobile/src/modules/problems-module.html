@@ -23,11 +23,11 @@
                     <iron-icon icon="icons:file-download"></iron-icon>
                 </a>
             </div>
-            <iron-list slot="list" id="problems" items="[[problems]]">
-                <template>
+            <div id="list" slot="list">
+                <template is="dom-repeat" id="problems" items="[[problems]]">
                     <problems-cell-module problem="[[item]]"></problems-cell-module>
                 </template>
-            </iron-list> 
+            </div>
             <pages-module slot="footer" topic="[[topic]]" name="[[name]]"></pages-module>
         </section-module>   
     </template>
@@ -57,15 +57,7 @@
             static get observers() {
                 return [
                     'getProblems(topic, page, name, section)'
-                ];
-            }
-
-            connectedCallback(){
-                super.connectedCallback()
-
-                dispatcher.subscribe('math-rendered',_ => {
-                    this.$.problems.notifyResize()
-                })
+                ]
             }
 
             getProblems(topic, p, name, section){

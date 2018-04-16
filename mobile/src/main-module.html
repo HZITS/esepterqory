@@ -104,7 +104,7 @@
 			<articles-module name="articles"></articles-module>
 			<home-module name="home"></home-module>
 		</iron-pages>
-		<app-drawer slot="drawer" id="drawer">
+		<app-drawer slot="drawer" id="drawer" disable-swipe>
 			<div class="menu">
 				<iron-selector class="layout vertical" selected="[[section]]" attr-for-selected="name">
 					<a href="/home" name="home">Үй</a>
@@ -152,7 +152,7 @@
 			openDrawer(){
 				this.$.drawer.open()
 			}
-
+			
 			routeSectionChanged(section) {
 				this.sectionDebouncer = Polymer.Debouncer.debounce(
 				this.sectionDebouncer,
