@@ -107,7 +107,7 @@
 		<app-drawer slot="drawer" id="drawer" disable-swipe>
 			<div class="menu">
 				<iron-selector class="layout vertical" selected="[[section]]" attr-for-selected="name">
-					<a href="/home" name="home">Үй</a>
+					<a href="/home" name="home">Бастапқы</a>
 					<a href="/articles/articles/1" name="articles">Теория</a>
 					<a href="/topics/topics/1" name="topics">Тақырыптар</a>
 					<a href="/sources/sources/1" name="sources">Дереккөздер</a>
@@ -158,7 +158,7 @@
 				this.sectionDebouncer,
 				Polymer.Async.timeOut.after(100),
 				_ => {
-					this.section = section || 'topics'
+					this.section = section || 'home'
 				})
 			}
 
