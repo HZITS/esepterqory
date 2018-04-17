@@ -7,9 +7,6 @@
 <dom-module id="problems-module">
     <template>
         <style include="shared-styles">
-            iron-list{
-                z-index:10
-            }
         </style>
         <section-module
             show-title
@@ -22,7 +19,7 @@
                     <iron-icon icon="icons:file-download"></iron-icon>
                 </a>
             </div>
-            <iron-list slot="list" id="problems" items="[[problems]]">
+            <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{currentProblem}}">
                 <template>
                     <problems-cell-module selected="[[selected]]" problem="[[item]]"></problems-cell-module>
                 </template>
@@ -42,13 +39,13 @@
                         type: Object,
                         statePath: 'topic'
                     },
-                    page: {
-                        type: Number,
-                        statePath: 'page'
-                    },
                     section: {
                         type: String,
                         statePath: 'section'
+                    },
+                    page: {
+                        type: Number,
+                        statePath: 'page'
                     },
                     currentProblem: {
                         type: Object,
@@ -59,7 +56,7 @@
 
             static get observers() {
                 return [
-                    'getProblems(topic, page, name, section)'
+                    'getProblems(topic, page, section, name)'
                 ];
             }
 
@@ -72,12 +69,12 @@
 
             }
 
-            getProblems(topic, p, name, section){
-
+            getProblems(topic, p, section, name){
+                
                 if(!topic) return
                 if(!topic.path) return
                 if(!p) return
-                if(name != section) return
+                if(section != name) return
 
                 this.pageDebouncer = Polymer.Debouncer.debounce(
                 this.pageDebouncer,
@@ -97,6 +94,13 @@
                     })                    
                 })
 
+            }
+
+            currentProblemChanged(problem){
+                this.dispatch({
+                    type: 'currentProblem',
+                    value:problem
+                })
             }
 
         }

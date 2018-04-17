@@ -13,19 +13,19 @@
         <style include="shared-styles">
         </style>
         <dashboard-module>
-            <topics-tree-module slot="section1"></topics-tree-module>
+            <topics-tree-module title="articles" slot="section1"></topics-tree-module>
             <section-module
                 slot="section2"
                 title="[[article.title]]"
                 style="width:500px"
                 max="37"
             >   
-                <iron-list slot="list" id="articles" items="[[articles]]">
+                <iron-list slot="list" id="articles" items="[[articles]]" selection-enabled selected-item="{{currentArticle}}">
                     <template>
-                        <articles-cell-module article="[[item]]"></articles-cell-module>
+                        <articles-cell-module selected="[[selected]]" article="[[item]]"></articles-cell-module>
                     </template>
                 </iron-list> 
-                <pages-module slot="footer" topic="[[topic]]"></pages-module>
+                <pages-module slot="footer" topic="[[topic]]" title="articles"></pages-module>
             </section-module>   
             <article-module slot="section3"></article-module>
         </dashboard-module>
@@ -38,13 +38,17 @@
             static get properties() {
                 return {
                     article: Object,
+                    currentArticle: {
+                        type: Object,
+                        observer:'currentArticleChanged'
+                    },
+                    section: {
+                        type: Object,
+                        statePath: 'section'
+                    },
                     topic: {
                         type: Object,
                         statePath: 'topic'
-                    },
-                    section: {
-                        type: String,
-                        statePath: 'section'
                     },
                     page: {
                         type: Number,
@@ -91,6 +95,13 @@
                     .then( res => {
                         this.articles = res
                     })
+                })
+            }
+
+            currentArticleChanged(article){
+                this.dispatch({
+                    type: 'currentArticle',
+                    value:article
                 })
             }
 

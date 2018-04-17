@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer-element.html">
-<link rel="import" href="../modules/redux-store.html">
 
 <dom-module id="articles-cell-module">
     <template>
@@ -18,31 +17,24 @@
                 outline: none
             }
             .topic{
-                background-color: var(--paper-grey-100);
+                background-color: var(--paper-grey-200);
                 border-radius: 4px;
                 padding: 2px 4px;
-                color: var(--paper-grey-500);
-                font-size: 12px;
+                color: var(--paper-grey-600);
+                font-size: 14px;
             }
             .title{
                 font-weight: 500
             }
-           .seen{
-               font-size: 14px;
-               color: var(--paper-grey-500);
-               line-height: 24px;
-               height: 24px;
-               background-color: var(--paper-grey-100);
-               margin-top: 8px;
-               border-radius: 4px;
-               padding: 4px;
-               cursor: pointer
-           }
-           .seen iron-icon{
-               color: var(--paper-grey-400);
-               width: 16px;
-               margin: 0px 4px;
-           }
+            .seen{
+                font-size: 11px;
+                color: var(--paper-grey-500)
+            }
+            .seen iron-icon{
+                color: var(--paper-grey-400);
+                width: 16px;
+                margin-right: 4px
+            }
             .dl{
                 font-size: 12px;
                 color: var(--paper-grey-500)
@@ -60,31 +52,39 @@
             <template is="dom-repeat" items="[[article.topics]]">
                 <a class="topic" href$="/articles/[[item._id]]">[[item.title]]</a>
             </template>
-            <div class="seen layout horizontal justified" on-click="showArticle">
-                <span>Көру</span>
-                <span>[[article.seen]]<iron-icon icon="icons:visibility"></iron-icon></span>
+            <div class="seen layout horizontal center">
+                <iron-icon icon="icons:visibility"></iron-icon>
+                [[article.seen]]
             </div>
         </div>
     </template>
     <script>
-        class ArticlesCellModule extends ReduxMixin(Polymer.Element) {
+        class DashboardarticlesCellModule extends Polymer.Element {
 
             static get is() { return 'articles-cell-module' }
 
             static get properties() {
                 return {
-                    article: Object
+                    problem: {
+                        type: Object,
+                        observer: 'problemChanged'
+                    },
+                    selected:{
+                        type: Object,
+                        observer: 'selectedChanged'
+                    }
                 }
             }
 
-            showArticle(){
-                this.dispatch({
-                    type: 'articleId',
-                    value: this.article._id
-                })
+            selectedChanged(s){
+                s ? this.style.backgroundColor = "#f5f5f5": this.style.backgroundColor = "white"
+            }
+
+            problemChanged(problem){
+                this.$.des.innerHTML = problem.problem;
             }
 
         }
-        customElements.define(ArticlesCellModule.is, ArticlesCellModule);
+        customElements.define(DashboardarticlesCellModule.is, DashboardarticlesCellModule);
     </script>
 </dom-module>

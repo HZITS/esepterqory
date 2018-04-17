@@ -62,6 +62,19 @@
             }
         }
 
+        connectedCallback() {
+            super.connectedCallback();
+        
+            this.$.editor.addEventListener("paste", function(e) {
+                e.preventDefault();
+                var text = e.clipboardData.getData("text/plain");
+                var temp = document.createElement("div");
+                temp.innerHTML = text;
+                document.execCommand("insertHTML", false, temp.textContent);
+            });
+        
+        }
+
         getHTML(){
             return this.$.editor.innerHTML
         }

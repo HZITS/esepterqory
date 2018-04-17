@@ -22,11 +22,18 @@
                 color: var(--paper-grey-700);
                 max-width: 100%;
                 display: flex;
-                align-items: center
+                align-items: center;
+                padding-left: 16px;
             }
-            .list{
-                margin-top: 0;
-                margin-bottom: 16px;
+        
+            .count{
+                font-size: 12px;
+                color: var(--paper-grey-400)
+            }
+            .item{
+                padding: 8px 0px;
+                border-bottom: 1px solid var(--paper-grey-300);
+                width: 100%;
             }
         </style>
         <section-module
@@ -34,13 +41,16 @@
             title="[[topic.title]]"
             style="width:300px"
         >  
-            <ul class="list" slot="list">
-                <template is="dom-repeat" items="[[topic.subtopics]]">
-                    <a class="listItem layout horizontal" href$="/[[section]]/[[item._id]]/1">
-                        <li>[[item.title]]</li>
-                    </a>
-                </template>
-            </ul>
+           <div slot="list"> 
+               <template is="dom-repeat" id="list" items="[[topic.subtopics]]">
+                   <a class="listItem layout horizontal" href$="/[[section]]/[[item._id]]/1">
+                       <div class="item">
+                           <div>[[item.title]]</div>
+                           <div class="count">[[setCount(item)]]</div>
+                       </div>
+                   </a>
+               </template>
+           </div>
         </section-module>
     </template>
     <script>
@@ -61,6 +71,15 @@
                     }
                 }
             }
+
+            setCount(item){
+                if (this.section != 'articles') {
+                    return 'есептер саны ' + item.problemsCount
+                } else {
+                    return 'материалдар саны ' + item.articlesCount
+                }
+            }
+
         }
         customElements.define(TopicsTreeModule.is, TopicsTreeModule);
     </script>

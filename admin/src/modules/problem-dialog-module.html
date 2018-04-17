@@ -43,6 +43,7 @@
                 <paper-input no-label-float label="Eceп нөмірі" value="{{number}}"></paper-input>
                 <editor-module placeholder="Есеп" id="problem"></editor-module>
                 <editor-module placeholder="Шешуі" id="solution"></editor-module> 
+                <paper-input style="margin-top: 16px" no-label-float label="Автор" value="{{author}}"></paper-input>
                 <template is="dom-if" if="[[!edit]]"> 
                      <div class="mainButton" on-click="add">Қосу</div>
                 </template>
@@ -111,6 +112,7 @@
                 ajax().post("/api/problems", {
                     path: this.topic.path,
                     number: this.number,
+                    author: this.author,
                     problem: this.$.problem.getHTML(),
                     solution: this.$.solution.getHTML()
                 })

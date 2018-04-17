@@ -41,7 +41,7 @@
             <div class="title">[[problem.number]]</div>
         </div>  
         <div class="body">
-            <template is="dom-if" if="[[problem]]">
+            <template is="dom-if" if="[[data]]">
                 <h3 class="title">Есеп</h3>
                 <p id="problem"></p>
                 <h3 class="title tb">Шешуі</h3>
@@ -56,33 +56,24 @@
 
             static get properties() {
                 return {
-                    name: String,
-                    problemId: {
+                    data: {
                         type: Object,
-                        statePath(state){
-                            return state[this.name + 'ProblemId'] 
-                        },
-                        observer: 'problemIdChanged'
+                        statePath: 'currentProblem',
+                        observer: 'dataChanged'
                     },
                     problem: Object
                 }
             }
 
-            problemIdChanged(id){
-
-               if(!id) return
-             
-               ajax().get("/api/problems/id/" + id)
-                .then( res => {
-                    if(!res) return
-
-                    this.problem = res
-                    setTimeout(_ => {
+            dataChanged(data){
+               if(data){
+                    ajax().get("/api/problems/id/" + data._id)
+                    .then( res => {
+                        this.problem = res
                         this.shadowRoot.querySelector("#problem").innerHTML = res.problem
                         this.shadowRoot.querySelector("#solution").innerHTML = res.solution
-                    })
-                    
-               })
+                   })
+               }
             }
 
         }

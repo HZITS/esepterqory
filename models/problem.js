@@ -9,6 +9,7 @@ const problemSchema = new mongoose.Schema({
     path: [String],
     topics: [String],
     topic: String,
+    author: String,
     seen: {
         type: Number,
         default: 0

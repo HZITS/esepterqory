@@ -35,7 +35,7 @@
         <div class="head layout horizontal justified">
         </div>  
         <div class="body">
-            <template is="dom-if" if="[[article]]">
+            <template is="dom-if" if="[[data]]">
                 <h2 class="title">[[article.title]]</h2>
                 <div id="article"></div>
             </template>
@@ -48,26 +48,38 @@
 
             static get properties() {
                 return {
-                    articleId: {
+                    data: {
                         type: Object,
-                        statePath: 'articleId',
-                        observer: 'articleIdChanged'
+                        statePath: 'currentArticle',
+                        observer: 'dataChanged'
                     },
                     article: Object
                 }
             }
             
-            articleIdChanged(id){
+            dataChanged(data){
 
-                if(!id) return
+                if(!data) return
 
-                ajax().get("/api/articles/id/" + id)
+                ajax().get("/api/articles/id/" + data._id)
                 .then( res => {
                     this.article = res
-                    setTimeout(_ => {
-                        this.shadowRoot.querySelector("#article").innerHTML = res.article
-                    })
-                  
+                    this.shadowRoot.querySelector("#article").innerHTML = res.article
+                })
+            }
+
+            edit(){
+                this.$.articleDialog.open()
+            }
+
+            delete(){
+                ajax().delete("/api/articles/id/" + this.article._id, {
+                    data: {
+                        path: this.article.path
+                    }
+                })
+                .then( res => {
+                    dispatcher.dispatch('reload-articles')
                 })
             }
 
