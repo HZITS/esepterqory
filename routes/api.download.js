@@ -39,7 +39,7 @@ router.route('/problem/:id')
         $.root().prepend(`<h3>${problem.number}</h3>`)
 
         renderMath($.html(), html => {
-            const FILENAME = encodeURIComponent(problem.number)
+            const FILENAME = encodeURIComponent(problem.number) + '.pdf'
             res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
             pdf.create(html, options).toStream(function(err, stream){
                 stream.pipe(res);
@@ -66,7 +66,7 @@ router.route('/article/:id')
         $.root().prepend(`<h3>${article.title}</h3>`)
 
         renderMath($.html(), html => {
-            const FILENAME = encodeURIComponent(article.title)
+            const FILENAME = encodeURIComponent(article.title) + '.pdf'
             res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
             pdf.create(html, options).toStream(function(err, stream){
                 stream.pipe(res);
