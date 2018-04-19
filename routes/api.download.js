@@ -96,7 +96,7 @@ router.route('/topic/:id/:page')
             return
         }
 
-        const source = problems.map((el, index) => {return `<div style="font-size:16px; font-weight:700">${index + 1}.${el.number}</div><p style="font-size:12px;margin-top: 0">` + el.problem}).join('</p>')
+        const source = problems.map(el => {return `<div style="font-size:16px; font-weight:700">${el.number}</div><p style="font-size:12px;margin-top: 0">` + el.problem}).join('</p>')
         const $ = setMath(source)
         
         renderMath($.html(), html => {
