@@ -100,9 +100,8 @@ router.route('/topic/:id/:page')
         const $ = setMath(source)
         
         renderMath($.html(), html => {
-            res.set({
-                "Content-Disposition": `attachment; filename="${req.params.id}.pdf"`
-            })
+            const FILENAME = encodeURIComponent(req.params.id) + '.pdf'
+            res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
             pdf.create(html, options).toStream(function(err, stream){
                 stream.pipe(res);
             })
