@@ -62,7 +62,7 @@ router.route('/article/:id')
             return
         }
 
-        const $ = setMath(article.article)
+        const $ = setMath('<div style="font-size:14px">' + article.article + '</div>')
         $.root().prepend(`<h3>${article.title}</h3>`)
 
         renderMath($.html(), html => {
