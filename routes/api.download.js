@@ -35,7 +35,7 @@ router.route('/problem/:id')
             return
         }
 
-        const $ = setMath(problem.problem)
+        const $ = setMath('<p style="font-size:12px">' +problem.problem + '</p>')
         $.root().prepend(`<h3>${problem.number}</h3>`)
 
         renderMath($.html(), html => {
@@ -62,7 +62,7 @@ router.route('/article/:id')
             return
         }
 
-        const $ = setMath('<div style="font-size:11px">' + article.article + '</div>')
+        const $ = setMath('<p style="font-size:12px">' + article.article + '</p>')
         $.root().prepend(`<h3>${article.title}</h3>`)
 
         renderMath($.html(), html => {
@@ -96,7 +96,7 @@ router.route('/topic/:id/:page')
             return
         }
 
-        const source = problems.map(el => {return `<h2>${el.number}</h2><p>` + el.problem}).join('</p>')
+        const source = problems.map((el, index) => {return `<div style="font-size:16px; font-weight:700">${index + 1}.${el.number}</div><p style="font-size:12px;margin-top: 0">` + el.problem}).join('</p>')
         const $ = setMath(source)
         
         renderMath($.html(), html => {
