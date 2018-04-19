@@ -4,6 +4,7 @@ const router = express.Router()
 const sid = require('shortid-36')
 const Article = require('../models/article');
 const Topic = require('../models/topic');
+const moment = require('moment')
 
 router.route('/')
 .post((req, res) => {
@@ -65,7 +66,7 @@ router.route('/topic/:topicId/:pageId')
         model: 'Topic',
         select: '_id title'
     })
-    .select('topics title _id createdAt seen downloaded')
+    .select('topics title _id createdAt seen downloaded createdAt')
     .skip(perPage * (req.params.pageId - 1))
     .limit(perPage)
     .sort({createdAt: -1})
@@ -74,7 +75,14 @@ router.route('/topic/:topicId/:pageId')
             res.json(err)
             return
         }
-        res.json(articles)
+        
+        const result = articles.map(el => {
+            var article = el.toObject()
+            article.createdAt = moment(article.createdAt).format('DD.MM.YYYY')
+            return article
+        })
+
+        res.json(result)
     })
 })
 

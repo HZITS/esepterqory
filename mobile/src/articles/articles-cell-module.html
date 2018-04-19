@@ -46,6 +46,11 @@
                 font-size: 12px;
                 color: var(--paper-grey-500)
             }
+            .date{
+                font-size: 12px;
+                padding-top: 8px;
+                color: var(--paper-grey-500)
+            }
         </style>
         <div class="wrapper">
             <div class="head layout horizontal justified">
@@ -63,6 +68,7 @@
                 <span>Көру</span>
                 <span>[[article.seen]]<iron-icon icon="icons:visibility"></iron-icon></span>
             </div>
+            <div class="date">[[article.createdAt]]</div>
         </div>
     </template>
     <script>
