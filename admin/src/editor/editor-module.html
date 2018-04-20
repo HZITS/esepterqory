@@ -58,19 +58,35 @@
 
         static get properties(){
             return {
-                placeholder: String
+                placeholder: String,
+                copiedFromEditor: {
+                    type: Boolean,
+                    value: false
+                }
             }
         }
 
         connectedCallback() {
             super.connectedCallback();
         
-            this.$.editor.addEventListener("paste", function(e) {
-                e.preventDefault();
+            this.$.editor.addEventListener("paste", (e) => {
+
+                if(this.copiedFromEditor) {
+                    this.copiedFromEditor = false
+                    return
+                }
+
+                e.preventDefault()
                 var text = e.clipboardData.getData("text/plain");
                 var temp = document.createElement("div");
                 temp.innerHTML = text;
                 document.execCommand("insertHTML", false, temp.textContent);
+                
+            });
+
+            this.$.editor.addEventListener("copy", (e) => {
+                console.log('copied')
+                this.copiedFromEditor = true
             });
         
         }

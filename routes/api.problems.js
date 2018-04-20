@@ -20,8 +20,6 @@ router.route('/')
     problem.solution = req.body.solution
     problem.path = req.body.path.split('/')
 
-    if (req.body.author) problem.author = req.body.author
-
     problem.topics = [problem.path[problem.path.length - 1]]
     problem.topic = problem.path[problem.path.length - 1]
 
@@ -88,7 +86,7 @@ router.route('/topic/:topicId/:pageId')
         model: 'Topic',
         select: '_id title'
     })
-    .select('problem topics path number _id seen downloaded createdAt author')
+    .select('problem topics path number _id seen downloaded createdAt')
     .skip(perPage * (req.params.pageId - 1))
     .limit(perPage)
     .sort({number: 1})
