@@ -1,4 +1,7 @@
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html"> 
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../modules/redux-store.html">
 <link rel="import" href="editor-formula-module.html">
 
 <dom-module id="editor-module">
@@ -53,7 +56,7 @@
     </template>
   
     <script>
-    class EditorModule extends Polymer.Element {
+    class EditorModule extends ReduxMixin(Polymer.Element) {
         static get is() { return 'editor-module'; }
 
         static get properties(){
@@ -61,7 +64,7 @@
                 placeholder: String,
                 copiedFromEditor: {
                     type: Boolean,
-                    value: false
+                    statePath: 'copiedFromEditor'
                 }
             }
         }
@@ -72,7 +75,10 @@
             this.$.editor.addEventListener("paste", (e) => {
 
                 if(this.copiedFromEditor) {
-                    this.copiedFromEditor = false
+                    this.dispatch({
+                        type: 'copiedFromEditor',
+                        value: false
+                    })
                     return
                 }
 
@@ -85,8 +91,11 @@
             });
 
             this.$.editor.addEventListener("copy", (e) => {
-                console.log('copied')
-                this.copiedFromEditor = true
+
+                this.dispatch({
+                    type: 'copiedFromEditor',
+                    value: true
+                })
             });
         
         }
