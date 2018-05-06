@@ -38,6 +38,8 @@ router.route('/problem/:id')
         const $ = setMath('<p style="font-size:12px">' +problem.problem + '</p>')
         $.root().prepend(`<h3>${problem.number}</h3>`)
 
+
+
         renderMath($.html(), html => {
             const FILENAME = encodeURIComponent(problem.number) + '.pdf'
             res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
@@ -118,15 +120,30 @@ router.route('/topic/:id/:page')
 //Setting math
 const setMath = (html) => {
     const $ = cheerio.load(html)
+
     const arr = $('editor-formula-module').toArray()
 
     arr.forEach((el, index) => {
+
+        if($(el).children().first().attr('id') == undefined) {
+            let p = $(el).parent()
+
+            let contents = p.contents()
+            p.after(contents)
+            p.remove()
+        }
+
         if($(el).attr('display') == "block")
             $(el).after("$$" + $(el).attr('math') + "$$")
         else 
             $(el).after("$" + $(el).attr('math') + "$")
+        
         $(el).remove()
+
     })
+
+    $('#body').remove()
+
     return $
 }
 

@@ -9,6 +9,7 @@ const useragent = require('express-useragent')
  
 // MongoDB
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
+// mongoose.connect('mongodb://admin:adminRoot17!@ds223738.mlab.com:23738/heroku_crxlxhtx')
 
 // Express
 var app = express()
