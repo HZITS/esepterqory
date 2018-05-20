@@ -8,8 +8,8 @@ const rendertron = require('rendertron-middleware')
 const useragent = require('express-useragent')
  
 // MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
-// mongoose.connect('mongodb://admin:adminRoot17!@ds223738.mlab.com:23738/heroku_crxlxhtx')
+// mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/test6')
+mongoose.connect('mongodb://admin:adminRoot17!@ds223738.mlab.com:23738/heroku_crxlxhtx')
 
 // Express
 var app = express()
@@ -56,7 +56,8 @@ app.use(subdomain('admin', require('./routes/admin')))
 
 app.get('/*', prpl.makeHandler('.', {
 	builds: [
-		{name: process.env.MONGODB_URI ? 'client/build/es5': 'client'}
+		// {name: process.env.MONGODB_URI ? 'client/build/es5': 'client'}
+		{name:'client/build/es5'}
 	]
 }))
 
