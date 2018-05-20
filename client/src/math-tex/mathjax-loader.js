@@ -31,9 +31,9 @@
             }
             mathjaxHub.Queue(flush_queue);
         } else {
-            console.log('ended')
+
             dispatcher.dispatch('math-rendered')
-             state = states.ready;
+            state = states.ready;
         }
            
     }
@@ -44,6 +44,7 @@
             skipStartupTypeset: true,
             showMathMenu: false,
             showProcessingMessages: false,
+            'HTML-CSS': { linebreaks: { automatic: true } },
             messageStyle: "none",
             jax: ['input/TeX', 'output/HTML-CSS'],
             TeX: {

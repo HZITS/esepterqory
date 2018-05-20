@@ -22,6 +22,50 @@ const options = {
     },
 }
 
+router.route('/ids/:arr')
+.get((req,res) => {
+    res.set({
+        "Content-Type": "application/octet-stream",
+    })
+
+    const arr = req.params.arr.split(',')
+
+    Problem.find({
+        '_id': {
+            $in: arr
+        }
+    })
+    .sort({number: 1})
+    .exec((err, problems) => {
+        if(err) {
+            res.json(err)
+            return
+        }
+
+        const source = problems.map(el => {return `<div style="font-size:16px; font-weight:700">${el.number}</div><p style="font-size:12px;margin-top: 0">` + el.problem}).join('</p>')
+        const $ = setMath(source)
+
+        renderMath($.html(), html => {
+            const FILENAME = encodeURIComponent('есепетер.pdf')
+            res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
+            
+            pdf.create(html, options).toStream(function(err, stream){
+                stream.pipe(res);
+            })
+
+            Problem.find({
+                '_id': {
+                    $in: arr
+                }
+            })
+            .setOptions({ multi: true })
+            .update({ $inc: { downloaded: 1 } })
+            .exec()
+        })
+    })
+
+})
+
 //Download problem by id
 router.route('/problem/:id')
 .get((req, res) => {

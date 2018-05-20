@@ -1,0 +1,120 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="redux-store.html">
+
+<dom-module id="download-pages-module">
+    <template>
+        <style include="shared-styles">
+       
+            iron-selector{
+                border-top: 2px solid var(--paper-grey-300);
+                border-bottom: 2px solid var(--paper-grey-300);
+                line-height: 38px;
+                padding-left: 8px;
+            }
+            .page{
+                padding: 0px 8px;
+            }
+            .page.iron-selected{
+                color:var(--app-main-color)
+            }
+        </style>
+        <iron-selector id="selector" class="layout horizontal center" selected-item="{{selectedPage}}" attr-for-selected="name">
+            <template is="dom-repeat" items="[[pages]]">
+                <span class="page" name$="[[item]]">
+                    [[item]]
+                </span>
+            </template>
+        </iron-selector>
+    </template>
+    <script>
+        class DownloadPagesModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'download-pages-module' }
+
+            static get properties() {
+                return {
+                   title: String,
+                   topic: {
+                       type: Object,
+                       statePath: 'topic'
+                   },
+                   pages: Array,
+                   dpage: {
+                       type: Number,
+                       statePath: 'dpage'
+                   },
+                   currentPage: Number,
+                   section: {
+                       type: String,
+                       statePath: 'section'
+                   },
+                   startIndex:{
+                       type:Number,
+                       value:0
+                   },
+                   selectedPage: {
+                       type: Object,
+                       observer: 'selectedPageChanged'
+                   }
+                }
+            }
+
+            static get observers() {
+                return [
+                    'pageChanged(dpage, topic, title)'
+                ]
+            }
+
+            selectedPageChanged(p){
+                if(!p) return
+
+                console.log(p.getAttribute('name'))
+
+                this.dispatch({
+                    type: 'dpage',
+                    value: Number(p.getAttribute('name'))
+                })
+            }
+
+            pageChanged(p, topic, title){
+                console.log('pagppg')
+                var page = Number(p)
+                if(!topic) return
+                if(!page) return
+
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+
+                    const perPage = 10
+                    const maxPages = 10
+                    const upperBound = title == "articles" ? Math.ceil(topic.articlesCount / perPage): Math.ceil(topic.problemsCount / perPage) 
+                    var pages = []
+                    var endIndex
+
+                    if(page - 5 <= 0 ) {
+                        this.startIndex = 1
+                        endIndex = upperBound < maxPages ? upperBound : maxPages
+                    } else {
+                        this.startIndex = page - 5
+                        endIndex = page + 4 > upperBound ? upperBound: page + 4
+                    }
+
+                    for(var i = this.startIndex; i < endIndex + 1; i++){
+                        pages.push(i)
+                    }
+
+                    this.pages = pages
+
+                    setTimeout(_ => {
+                        this.$.selector.selected = page
+                    }, 100)
+                })
+            }
+
+        }
+        customElements.define(DownloadPagesModule.is, DownloadPagesModule);
+    </script>
+</dom-module>

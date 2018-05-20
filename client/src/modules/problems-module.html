@@ -3,6 +3,7 @@
 <link rel="import" href="problems-cell-module.html">
 <link rel="import" href="redux-store.html">
 <link rel="import" href="pages-module.html">
+<link rel="import" href="download-module.html">
 
 <dom-module id="problems-module">
     <template>
@@ -15,9 +16,7 @@
             max="37"
         >   
             <div slot="actions" class="layout horizontal">
-                <a target="_blank" href$="/api/download/topic/[[topic._id]]/[[page]]">
-                    <iron-icon icon="icons:file-download"></iron-icon>
-                </a>
+                <iron-icon icon="icons:file-download" on-click="openDownload"></iron-icon>
             </div>
             <iron-list slot="list" id="problems" items="[[problems]]" selection-enabled selected-item="{{currentProblem}}">
                 <template>
@@ -26,6 +25,7 @@
             </iron-list> 
             <pages-module slot="footer" topic="[[topic]]" title="[[title]]"></pages-module>
         </section-module>   
+        <download-module name="[[name]]" id="dm"></download-module>
     </template>
     <script>
         class ProblemsModule extends ReduxMixin(Polymer.Element) {
@@ -67,6 +67,11 @@
                     this.$.problems.notifyResize()
                 })
 
+            }
+
+            openDownload(){
+                console.log('lego')
+                this.$.dm.open()
             }
 
             getProblems(topic, p, section, name){

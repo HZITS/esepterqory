@@ -1,0 +1,134 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/isw-dialog/isw-dialog.html">
+<link rel="import" href="download-pages-module.html">
+<link rel="import" href="download-cell-module.html">
+<link rel="import" href="redux-store.html">
+
+
+<dom-module id="download-module">
+    <template>
+        <style include="shared-styles">
+            #list{
+                overflow: auto;
+                height: calc(80vh - 120px);
+            }
+
+            .wrapper{
+                height: 80vh; 
+                width: 700px;
+            }
+        </style>
+        <isw-dialog id="dialog" with-backdrop>
+            <div class="wrapper">
+                <div id="list">
+                    <iron-list id="problems" items="[[problems]]">
+                        <template>
+                            <download-cell-module problem="[[item]]"></download-cell-module>
+                        </template>
+                    </iron-list> 
+                </div>
+                <download-pages-module topic="[[topic]]" title="[[name]]"></download-pages-module>
+                <div class="footer layout horizontal justified" style="padding: 0px 16px">
+                    <div class="count" style="line-height: 80px">Eсептер саны [[count]]</div>
+                    <a target="_blank" href$="/api/download/ids/[[arrStr]]" class="mainButton">Жүктеу</a>
+                </div>
+            </div>
+        </isw-dialog>
+    </template>
+    <script>
+        class DownloadModule extends ReduxMixin(Polymer.Element) {
+
+            static get is() { return 'download-module' }
+
+            static get properties() {
+                return {
+                    name: String,
+                    topic: {
+                        type: Object,
+                        statePath: 'topic'
+                    },
+                    section: {
+                        type: String,
+                        statePath: 'section'
+                    },
+                    dpage: {
+                        type: Number,
+                        statePath: 'dpage'
+                    },
+                    dArray: {
+                        type: Array,
+                        statePath: 'dArray'
+                    },
+                    arrStr: {
+                        type:String,
+                        value: ''
+                    }
+                }
+            }
+
+            static get observers() {
+                return [
+                    'getProblems(topic, dpage, section, name)'
+                ]
+            }
+
+            connectedCallback(){
+                super.connectedCallback()
+                this.dispatch({
+                    type: 'dpage',
+                    value: 1
+                })
+
+                this.dispatch({
+                    type: 'dArray',
+                    value: []
+                })
+
+                dispatcher.subscribe('math-rendered',_ => {
+                    this.$.problems.notifyResize()
+                })
+
+                this.addEventListener('darray-changed', e => {
+                    console.log(this.arrStr)
+                    this.arrStr = this.dArray.join(',')
+                    this.count = e.detail.count
+                })
+            }
+
+            open(){
+                this.$.dialog.open()
+            }
+
+         
+            getProblems(topic, p, section, name){
+
+                console.log('rock')
+
+                if(!topic) return
+                if(!topic.path) return
+                if(!p) return
+                if(section != name) return
+
+                this.pageDebouncer = Polymer.Debouncer.debounce(
+                this.pageDebouncer,
+                Polymer.Async.timeOut.after(100),
+                _ => {
+                    if(topic.path.split('/').length > 1){
+                        this.problem = {
+                            title: topic.title + " есептері",
+                        } 
+                    } else {
+                        this.problem = null
+                    }
+
+                    ajax().get("/api/problems/topic/" + topic._id + "/" + p)
+                    .then( res => {
+                        this.problems = res
+                    })                    
+                })
+            }
+
+        }
+        customElements.define(DownloadModule.is, DownloadModule);
+    </script>
+</dom-module>
