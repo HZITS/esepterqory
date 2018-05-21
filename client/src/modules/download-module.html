@@ -23,13 +23,16 @@
                 <div id="list">
                     <iron-list id="problems" items="[[problems]]">
                         <template>
-                            <download-cell-module problem="[[item]]"></download-cell-module>
+                            <download-cell-module name="[[name]]" problem="[[item]]"></download-cell-module>
                         </template>
                     </iron-list> 
                 </div>
                 <download-pages-module topic="[[topic]]" title="[[name]]"></download-pages-module>
                 <div class="footer layout horizontal justified" style="padding: 0px 16px">
-                    <div class="count" style="line-height: 80px">Eсептер саны [[count]]</div>
+                    <div class="count layout vertical justified" style="padding: 16px 0px">
+                        <div>Eсептер саны [[count]]</div>
+                        <div on-click="clean" class="smallButton">Тазарту</div>
+                    </div>
                     <a target="_blank" href$="/api/download/ids/[[arrStr]]" class="mainButton">Жүктеу</a>
                 </div>
             </div>
@@ -57,7 +60,10 @@
                     },
                     dArray: {
                         type: Array,
-                        statePath: 'dArray'
+                        statePath(state){
+
+                            return state[state.section + 'dArray']
+                        }
                     },
                     arrStr: {
                         type:String,
@@ -80,7 +86,7 @@
                 })
 
                 this.dispatch({
-                    type: 'dArray',
+                    type: this.name + 'dArray',
                     value: []
                 })
 
@@ -89,7 +95,7 @@
                 })
 
                 this.addEventListener('darray-changed', e => {
-                    console.log(this.arrStr)
+
                     this.arrStr = this.dArray.join(',')
                     this.count = e.detail.count
                 })
@@ -99,10 +105,15 @@
                 this.$.dialog.open()
             }
 
-         
-            getProblems(topic, p, section, name){
+            clean(){
+                this.dispatch({
+                    type: this.name + 'dArray',
+                    value: []
+                })
+                this.$.problems.notifyResize()
+            }
 
-                console.log('rock')
+            getProblems(topic, p, section, name){
 
                 if(!topic) return
                 if(!topic.path) return

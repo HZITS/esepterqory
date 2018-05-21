@@ -69,9 +69,6 @@
 
             selectedPageChanged(p){
                 if(!p) return
-
-                console.log(p.getAttribute('name'))
-
                 this.dispatch({
                     type: 'dpage',
                     value: Number(p.getAttribute('name'))
@@ -79,7 +76,7 @@
             }
 
             pageChanged(p, topic, title){
-                console.log('pagppg')
+                
                 var page = Number(p)
                 if(!topic) return
                 if(!page) return

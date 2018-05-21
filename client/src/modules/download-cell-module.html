@@ -75,9 +75,13 @@
 
             static get properties() {
                 return {
+                    name: String,
                     downloadArray: {
                         type: Array,
-                        statePath: 'dArray'
+                        statePath(state){
+
+                            return state[state.section + 'dArray']
+                        }
                     },
                     problem: {
                         type: Object
@@ -126,7 +130,7 @@
             }
 
             problemChanged(problem, arr){
-                if(!problem) return
+                if(!problem || !arr) return
                 this.checked = this.isInArray(problem._id, arr)
                 this.$.des.innerHTML = problem.problem;
             }
