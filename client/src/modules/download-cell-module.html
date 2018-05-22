@@ -107,7 +107,8 @@
                 const arr = this.downloadArray
 
                 if(this.checked) {
-                    arr.push(this.problem._id)
+                    if(!this.isInArray(this.problem._id, arr))
+                        arr.push(this.problem._id)
                 } else {
                     arr.forEach((el, index) => {
 
@@ -118,7 +119,7 @@
                 }
 
                 this.dispatch({
-                    type: 'dArray',
+                    type: this.name + 'dArray',
                     value: arr
                 })
 
@@ -133,6 +134,11 @@
                 if(!problem || !arr) return
                 this.checked = this.isInArray(problem._id, arr)
                 this.$.des.innerHTML = problem.problem;
+            }
+
+            refresh(){
+
+                this.checked = this.isInArray(this.problem._id, this.downloadArray)
             }
 
             showTags(section) {

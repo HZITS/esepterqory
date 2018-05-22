@@ -33,7 +33,10 @@
                         <div>Eсептер саны [[count]]</div>
                         <div on-click="clean" class="smallButton">Тазарту</div>
                     </div>
-                    <a target="_blank" href$="/api/download/ids/[[arrStr]]" class="mainButton">Жүктеу</a>
+                    <div class="layout horizontal center">   
+                        <div on-click="selectAll" class="smallButton" style="padding-right: 16px">Барлығын белгілеу</div>
+                        <a target="_blank" href$="/api/download/ids/[[arrStr]]" class="mainButton">Жүктеу</a>
+                    </div>
                 </div>
             </div>
         </isw-dialog>
@@ -46,6 +49,10 @@
             static get properties() {
                 return {
                     name: String,
+                    problems: {
+                        type: Array,
+                        value: []
+                    },
                     topic: {
                         type: Object,
                         statePath: 'topic'
@@ -110,8 +117,42 @@
                     type: this.name + 'dArray',
                     value: []
                 })
+                this.arrStr = ''
                 this.count = 0
-                this.$.problems.notifyResize()
+                this.refresh()
+            }
+
+            selectAll(){
+
+                var arr = this.dArray
+
+                for(let el of this.problems) {
+                    if(!this.isInArray(el._id, arr)) {
+                        arr.push(el._id)
+                    }
+                }
+
+                this.dispatch({
+                    type: this.name + 'dArray',
+                    value: arr
+                })
+
+                this.arrStr = arr.join(',')
+                this.count = arr.length 
+
+                this.refresh()
+            }
+
+            isInArray(value, array) {
+              return array.indexOf(value) > -1;
+            }
+
+            refresh(){
+                let cells = this.shadowRoot.querySelectorAll('download-cell-module')
+
+                for(let cell of cells) {
+                    cell.refresh()
+                }
             }
 
             getProblems(topic, p, section, name){
