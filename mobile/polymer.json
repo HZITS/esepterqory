@@ -19,7 +19,8 @@
       "js": {"minify": true, "compile": true},
       "css": {"minify": true},
       "html": {"minify": true},
-      "bundle": true
+      "bundle": true,
+      "basePath": "/mobile/build/es5/"
     }
   ]
 }

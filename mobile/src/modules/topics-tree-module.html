@@ -40,7 +40,7 @@
             title="[[topic.title]]"
         >  
             <div slot="list"> 
-                <template is="dom-repeat" id="list" items="[[topic.subtopics]]">
+                <template is="dom-repeat" id="list" items="[[subtopics]]">
                     <a class="listItem layout horizontal" href$="/[[section]]/[[item._id]]/1">
                         <div class="item">
                             <div>[[item.title]]</div>
@@ -59,6 +59,10 @@
             static get properties() {
                 return {
                     title: String,
+                    subtopics: {
+                        type: Array,
+                        value: []
+                    },
                     section: {
                         type: String,
                         statePath: 'section'
@@ -68,6 +72,25 @@
                         statePath: 'topic'
                     }
                 }
+            }
+
+            /**
+              * Array of strings describing multi-property observer methods and their
+              * dependant properties
+              */
+            static get observers() {
+                return [
+                    'setTopics(section, topic)'
+                ];
+            }
+
+            setTopics(s, t){
+                if(s == 'home') {
+                    this.subtopics = []
+                } else {
+                    if(t) this.subtopics = t.subtopics
+                }
+
             }
 
             setCount(item){
