@@ -31,12 +31,14 @@
       "html": {
         "minify": true
       },
-      "bundle": true
+      "bundle": true,
+      "basePath": "/mobile/build/es5/"
     }
   ],
   "lint": {
     "rules": [
       "polymer-2"
     ]
-  }
+  },
+  "moduleResolution": "node"
 }
