@@ -42,8 +42,14 @@ router.route('/ids/:arr')
             return
         }
 
-        const source = problems.map(el => {return `<h3>${el.number}</h3><p>` + el.problem}).join('</p>')
+        var source = ''
 
+        problems.forEach(el => {
+            source += `
+            <h3>${el.number}</h3>
+            <p>${el.problem}</p>
+            `
+        })
 
         const html = `
         <!doctype html>
@@ -51,12 +57,12 @@ router.route('/ids/:arr')
             <head>
                 <style>
                     body{
-                        font-size:12px;
+                        font-size:11px;
                     }
                 </style>
             </head>
             <body>
-            ${source}</p>
+            ${source}
             </body>
         </html>
         `
