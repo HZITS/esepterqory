@@ -66,7 +66,7 @@ router.route('/ids/:arr')
             </body>
         </html>
         `
-        console.log($.html())
+
         const $ = setMath(html)
 
         renderMath($.html(), html => {
