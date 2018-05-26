@@ -42,8 +42,32 @@ router.route('/ids/:arr')
             return
         }
 
-        const source = problems.map(el => {return `<div style="font-size:16px; font-weight:700">${el.number}</div><p style="font-size:12px;margin-top: 0">` + el.problem}).join('</p>')
-        const $ = setMath(source)
+        const source = problems.map(el => {return `<h3>${el.number}</h3><p>` + el.problem}).join('</p>')
+
+
+        const html = `
+        <!doctype html>
+        <html>
+            <head>
+                <style>
+                    h3{
+                        margin-bottom: 0px;
+                    }
+                    p{
+                        margin-top:0px;
+                    }
+                    body{
+                        font-size:12px;
+                    }
+                </style>
+            </head>
+            <body>
+            ${source}</p>
+            </body>
+        </html>
+        `
+
+        const $ = setMath(html)
 
         renderMath($.html(), html => {
             const FILENAME = encodeURIComponent('есепетер.pdf')
@@ -79,10 +103,24 @@ router.route('/problem/:id')
             return
         }
 
-        const $ = setMath('<p style="font-size:12px">' + problem.problem + '</p>')
-        $.root().prepend(`<h3>${problem.number}</h3>`)
+        const html = `
+        <!doctype html>
+        <html>
+            <head>
+                <style>
+                     body{
+                         font-size:12px;
+                     }
+                </style>
+            </head>
+            <body>
+            <h3>${roblem.number}</h3>
+            <p>${problem.problem}</p>
+            </body>
+        </html>
+        `        
 
-        
+        const $ = setMath(html)
 
         renderMath($.html(), html => {
             const FILENAME = encodeURIComponent(problem.number) + '.pdf'
@@ -135,44 +173,6 @@ router.route('/article/:id')
             })
             article.downloaded += 1
             article.save()
-        })
-    })
-})
-
-//Download page of problems by topic and page number
-router.route('/topic/:id/:page')
-.get((req,res) => {
-
-    const perPage = 10
-
-    Problem.find({
-        path: req.params.id
-    })
-    .select('problem number')
-    .skip(perPage * (req.params.page - 1))
-    .limit(perPage)
-    .sort({number: 1})
-    .exec((err, problems) => {
-        if(err) {
-            res.json(err)
-            return
-        }
-
-        const source = problems.map(el => {return `<div style="font-size:16px; font-weight:700">${el.number}</div><p style="font-size:12px;margin-top: 0">` + el.problem}).join('</p>')
-        const $ = setMath(source)
-        
-        renderMath($.html(), html => {
-            const FILENAME = encodeURIComponent(req.params.id) + '.pdf'
-            res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
-            pdf.create(html, options).toStream(function(err, stream){
-                stream.pipe(res);
-            })
-            Problem.find()
-            .skip(perPage * (req.params.pageId - 1))
-            .limit(perPage)
-            .setOptions({ multi: true })
-            .update({ $inc: { downloaded: 1 } })
-            .exec()
         })
     })
 })
