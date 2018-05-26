@@ -10,7 +10,7 @@ const fs = require('fs')
 const options = {
     "border": {
       "top": "10mm",         
-      "right": "20mm",
+      "right": "10mm",
       "bottom": "5mm",
       "left": "10mm"
     },
