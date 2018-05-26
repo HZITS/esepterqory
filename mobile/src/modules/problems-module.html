@@ -18,11 +18,6 @@
             title="[[problem.title]]"
             max="37"
         >   
-            <div slot="actions" class="layout horizontal">
-                <a target="_blank" href$="/api/download/topic/[[topic._id]]/[[page]]">
-                    <iron-icon icon="icons:file-download"></iron-icon>
-                </a>
-            </div>
             <div id="list" slot="list">
                 <template is="dom-repeat" id="problems" items="[[problems]]">
                     <problems-cell-module problem="[[item]]"></problems-cell-module>
