@@ -79,10 +79,10 @@ router.route('/problem/:id')
             return
         }
 
-        const $ = setMath('<p style="font-size:12px">' +problem.problem + '</p>')
+        const $ = setMath('<p style="font-size:12px">' + problem.problem + '</p>')
         $.root().prepend(`<h3>${problem.number}</h3>`)
 
-
+        
 
         renderMath($.html(), html => {
             const FILENAME = encodeURIComponent(problem.number) + '.pdf'
@@ -108,9 +108,25 @@ router.route('/article/:id')
             return
         }
 
-        const $ = setMath('<p>' + article.article + '</p>')
-        $.root().prepend(`<h3>${article.title}</h3>`)
+        const html = `
+        <!doctype html>
+        <html>
+            <head>
+                <style>
+                     body{
+                         font-size:12px
+                     }
+                </style>
+            </head>
+            <body>
+            <h3>${article.title}</h3>
+            <p>${article.article}</p>
+            </body>
+        </html>
+        `
 
+        const $ = setMath(html)
+        
         renderMath($.html(), html => {
             const FILENAME = encodeURIComponent(article.title) + '.pdf'
             res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
