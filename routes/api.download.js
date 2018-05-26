@@ -114,7 +114,7 @@ router.route('/problem/:id')
                 </style>
             </head>
             <body>
-            <h3>${roblem.number}</h3>
+            <h3>${problem.number}</h3>
             <p>${problem.problem}</p>
             </body>
         </html>
