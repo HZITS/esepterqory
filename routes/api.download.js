@@ -50,12 +50,6 @@ router.route('/ids/:arr')
         <html>
             <head>
                 <style>
-                    h3{
-                        margin-bottom: 0px;
-                    }
-                    p{
-                        margin-top:0px;
-                    }
                     body{
                         font-size:12px;
                     }
