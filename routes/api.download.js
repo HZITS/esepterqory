@@ -114,7 +114,7 @@ router.route('/article/:id')
             <head>
                 <style>
                      body{
-                         font-size:12px
+                         font-size:11px;
                      }
                 </style>
             </head>
