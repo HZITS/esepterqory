@@ -81,7 +81,7 @@ router.route('/ids/:arr')
                 '_id': {
                     $in: arr
                 }
-            })]
+            })
             .setOptions({ multi: true })
             .update({ $inc: { downloaded: 1 } })
             .exec()
