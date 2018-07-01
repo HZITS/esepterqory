@@ -70,7 +70,7 @@ router.route('/ids/:arr')
         const $ = setMath(html)
 
         renderMath($.html(), html => {
-            const FILENAME = encodeURIComponent('есепетер.pdf')
+            const FILENAME = encodeURIComponent('есептер.pdf')
             res.setHeader('Content-Disposition', 'attachment;filename*=UTF-8\'\'' + FILENAME)
             
             pdf.create(html, options).toStream(function(err, stream){
@@ -81,7 +81,7 @@ router.route('/ids/:arr')
                 '_id': {
                     $in: arr
                 }
-            })
+            })]
             .setOptions({ multi: true })
             .update({ $inc: { downloaded: 1 } })
             .exec()
